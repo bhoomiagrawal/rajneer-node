@@ -1,20 +1,20 @@
 // models/subcategory.js
 module.exports = (sequelize, DataTypes) => {
-    const Subcategory = sequelize.define('Subcategory', {
+    const Subcategory = sequelize.define('subcategories', {
       id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true
       },
-      categoryId: {   // Foreign Key reference to the Category table
+      category_id: {   // Foreign Key reference to the Category table
         type: DataTypes.INTEGER,
         references: {
-          model: 'Categories', // refers to the Category model
+          model: 'categories', // refers to the Category model
           key: 'id'
         },
         allowNull: false
       },
-      subcategoryName: {
+      name: {
         type: DataTypes.STRING,
         allowNull: false
       }
@@ -25,9 +25,9 @@ module.exports = (sequelize, DataTypes) => {
     });
   
     Subcategory.associate = (models) => {
-      Subcategory.belongsTo(models.Category, {
-        foreignKey: 'categoryId',
-        as: 'category'
+      Subcategory.belongsTo(models.Categories, {
+        foreignKey: 'id',
+        as: 'categories'
       });
     };
   
