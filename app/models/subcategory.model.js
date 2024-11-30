@@ -1,6 +1,7 @@
 // models/subcategory.js
 module.exports = (sequelize, DataTypes) => {
-    const Subcategory = sequelize.define('subcategories', {
+    const Subcategory = sequelize.define('subcategories', 
+      {
       id: {
         type: DataTypes.INTEGER,
         primaryKey: true,

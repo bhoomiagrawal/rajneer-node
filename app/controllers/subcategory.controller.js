@@ -1,31 +1,44 @@
 const { Op, Sequelize } = require("sequelize");
 // const con = require('./../../config/database');
 const message = require('../utils/constant');
+const { SELECT } = require("sequelize/lib/query-types");
+const Categories = require('../models').categories
 const SubcategoryModel = require('../models').Subcategory;
 
+
 class Subcategory {
-    createSubcategory = async (req, res) => {
-        console.log('req', req.body)
-        // try {
-        //     const temp = {
-        //         name: req?.body?.name,
-        //         slug: req?.body?.slug
-        //     }
-        //     let data = SubcategoryModel.create(temp, {new: true});
-        //     return res.status(200).json({
-        //         status: true,
-        //         message: message. Subcategory_Added
-        //     })
-        // } catch (error) {
-        //     return res.status(500).json({
-        //         message: message.Server_Error,
-        //         status: false,
-        //         error: error
-        //     })
-        // }
+    create = async (req, res) => {
+        try {
+            console.log('req', req.body)
+            const data = await Categories.findAll({where: { category_code: 'd' }});
+            console.log(data,"dataaaaaaaaaaaaaaaaaa")
+            const category = await Categories.findOne({
+                where: {
+                    id: req?.body?.category_id,
+                },
+              });
+              console.log('category', category)
+            const temp = {
+                category_id:req?.body?.category_id,
+                name: req?.body?.name,
+            }
+            console.log('temp', temp)
+            // let data = SubcategoryModel.create(temp, {new: true});
+            // return res.status(200).json({
+            //     status: true,
+            //     message: message. Subcategory_Added
+            // })
+        } catch (error) {
+            console.log(error,"error")
+            return res.status(500).json({
+                message: message.Server_Error,
+                status: false,
+                error: error
+            })
+        }
     }
 
-    getAllSubcategory = async (req, res) => {
+    getAll = async (req, res) => {
         console.log("hi this is display the all items",req)
         // try {
         //     let page = Number(req?.query?.page);
@@ -69,7 +82,7 @@ class Subcategory {
         // }
     }
 
-    updateSubcategory = async (req, res) => {
+    update = async (req, res) => {
         console.log('req', req.body.name)
         // try {
         //     const temp = {
@@ -97,7 +110,7 @@ class Subcategory {
         // }
     }
 
-    deleteSubcategory = async (req, res) => {
+    delete = async (req, res) => {
         // try{
         //     let data = await SubcategoryModel.findOne({ where: {id: req?.params?.id} });
         //     if (!data) {
@@ -120,8 +133,24 @@ class Subcategory {
         //     })
         // }
     }
+    // // Delete all Categories from the database.
+    // deleteAll = (req, res) => {
+    // SubcategoryModel.destroy({
+    //   where: {},
+    //   truncate: false
+    // })
+    //   .then(nums => {
+    //     res.send({ message: `${nums} Subcategories were deleted successfully!` });
+    //   })
+    //   .catch(err => {
+    //     res.status(500).send({
+    //       message:
+    //         err.message || "Some error occurred while removing all Subcategories."
+    //     });
+    //   });
+    // };
 
-    getSingleSubcategory = async (req, res) => {
+    getSingle = async (req, res) => {
         // try {
         //     const singleSubcategory = await SubcategoryModel.findOne({ where: {id: req?.params?.id}})
         //     if(!singleSubcategory) {
