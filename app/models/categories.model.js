@@ -11,12 +11,18 @@ module.exports = (sequelize, Sequelize) => {
     category_code: {
       type: Sequelize.STRING
     },
-  
+
   }, {
     tableName: 'categories', // table name in the database
     timestamps: true,           // automatically adds createdAt, updatedAt fields
     paranoid: true              // adds deletedAt for soft deletes
   });
-
+  Categories.associate = (models) => {
+    // A category can have many subcategories
+    Categories.hasMany(models.subcategories, {
+      foreignKey: 'category_id',
+      as: 'subcategories',
+    });
+  };
   return Categories;
 };

@@ -1,6 +1,6 @@
 // models/subcategory.js
 module.exports = (sequelize, DataTypes) => {
-    const Subcategory = sequelize.define('subcategories', 
+    const Subcategories = sequelize.define('subcategories', 
       {
       id: {
         type: DataTypes.INTEGER,
@@ -25,13 +25,15 @@ module.exports = (sequelize, DataTypes) => {
       paranoid: true              // adds deletedAt for soft deletes
     });
   
-    Subcategory.associate = (models) => {
-      Subcategory.belongsTo(models.Categories, {
-        foreignKey: 'id',
-        as: 'categories'
+    Subcategories.associate = (models) => {
+      // A subcategory belongs to one category
+      Subcategories.belongsTo(models.categories, {
+        foreignKey: 'category_id',
+        as: 'categories',
       });
     };
   
-    return Subcategory;
+  
+    return Subcategories;
   };
   

@@ -2,12 +2,14 @@ const { Op, Sequelize } = require("sequelize");
 // const con = require('./../../config/database');
 const message = require('../utils/constant');
 const { SELECT } = require("sequelize/lib/query-types");
-const Categories = require('../models').categories
-const SubcategoryModel = require('../models').Subcategory;
+const db = require("../models");
+const Category = db.categories;
+const Subcategory = db.subcategories;
 
 
-class Subcategory {
-    create = async (req, res) => {
+
+// class Subcategory {
+    exports.create = async (req, res) => {
         try {
             console.log('req', req.body)
             const data = await Categories.findAll({where: { category_code: 'd' }});
@@ -38,7 +40,41 @@ class Subcategory {
         }
     }
 
-    getAll = async (req, res) => {
+
+    // controllers/subcategoryController.js
+
+// Create Subcategory function
+exports.createSubcategory = async (req, res) => {
+  const { name, category_id } = req.body;
+  try {
+    // Check if the category exists
+    console.log('Category', Category)
+    const category = await Category.findByPk(category_id);
+    if (!category) {
+      return res.status(404).json({ message: 'Category not found' });
+    }
+
+    // Create a new subcategory
+    const newSubcategory = await Subcategory.create({
+      name,
+      category_id, // Foreign key reference to Category
+    });
+
+    // Return success response with the created subcategory
+    return res.status(201).json({
+      message: 'Subcategory created successfully',
+      subcategory: newSubcategory,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      message: 'An error occurred while creating the subcategory',
+      error: error.message,
+    });
+  }
+};
+
+    exports.getAll = async (req, res) => {
         console.log("hi this is display the all items",req)
         // try {
         //     let page = Number(req?.query?.page);
@@ -82,7 +118,7 @@ class Subcategory {
         // }
     }
 
-    update = async (req, res) => {
+    exports.update = async (req, res) => {
         console.log('req', req.body.name)
         // try {
         //     const temp = {
@@ -110,7 +146,7 @@ class Subcategory {
         // }
     }
 
-    delete = async (req, res) => {
+    exports.delete = async (req, res) => {
         // try{
         //     let data = await SubcategoryModel.findOne({ where: {id: req?.params?.id} });
         //     if (!data) {
@@ -150,7 +186,7 @@ class Subcategory {
     //   });
     // };
 
-    getSingle = async (req, res) => {
+    exports.getSingle = async (req, res) => {
         // try {
         //     const singleSubcategory = await SubcategoryModel.findOne({ where: {id: req?.params?.id}})
         //     if(!singleSubcategory) {
@@ -171,6 +207,6 @@ class Subcategory {
         //     })
         // }
     }
-}
+// }
 
-module.exports = new Subcategory();
+// module.exports = new Subcategory();

@@ -7,7 +7,7 @@ const authorize = require('../middleware/authorization');
 
 
 router.get("/", SubcategoryController.getAll);
-router.post("/create", SubcategoryController.create);
+router.post("/", SubcategoryController.createSubcategory);
 
 // router.route("/get")
 //     .get(protectAdmin, SubcategoryController.getAll);

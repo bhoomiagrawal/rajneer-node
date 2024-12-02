@@ -5,7 +5,7 @@ const Op = db.Sequelize.Op;
 // Create and Save a new Category
 exports.create = (req, res) => {
   // Validate request
-  if (!req.body.title) {
+  if (!req.body.category_name) {
     res.status(400).send({
       message: "Content can not be empty!"
     });
@@ -13,14 +13,10 @@ exports.create = (req, res) => {
   }
 
   // Create a Category
-  const category = {
-    title: req.body.title,
-    description: req.body.description,
-    published: req.body.published ? req.body.published : false
-  };
 
+  let { category_name, category_code,} = req.body
   // Save Category in the database
-  Category.create({...req.body})
+  Category.create({category_name, category_code})
     .then(data => {
       res.send(data);
     })

@@ -21,6 +21,6 @@ db.sequelize = sequelize;
 
 db.tutorials = require("./tutorial.model.js")(sequelize, Sequelize);
 db.categories = require("./categories.model.js")(sequelize, Sequelize);
-// db.subcategory = require("./subcategory.model.js")(sequelize, Sequelize);
+db.subcategories = require("./subcategories.model.js")(sequelize, Sequelize);
 
 module.exports = db;
