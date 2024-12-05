@@ -1,23 +1,15 @@
-const express= require('express');
-const connectionSize = require("../controllers/connectionSize.controller")
-const authorize = require('../middleware/authorization');
+const express = require("express");
+const ConnectionSize = require("../controllers/connectionSize.controller")
+// const { protectAdmin } = require("../../middleware/Authorization");
 const router = express.Router();
+const authorize = require('../middleware/authorization');
 
-router.get("/", connectionSize.getAll);
-router.post("/create", connectionSize.create);
 
-// router.route("/get")
-//     .get(protectAdmin, connectionSize.getAll);
-// router.route("/create")
-//     .post(protectAdmin, connectionSize.create);
-// router.route("/edit/:id")
-//     .put(protectAdmin, connectionSize.update);
-// router.route("/delete/:id")
-//     .delete(protectAdmin, connectionSize.delete);
-// router.route("/get/:id")
-//     .get(protectAdmin, connectionSize.getSingle);
 
-//   Delete all Subcategoryies
-//   router.delete("/",authorize(), connectionSize.deleteAll);
+router.get("/", ConnectionSize.getAll);
+router.post("/", ConnectionSize.create);
+router.put("/edit/:id", ConnectionSize.update);
+router.delete("/delete/:id", ConnectionSize.delete);
+router.get("/get/:id", ConnectionSize.getSingle);
 
-module.exports= router;
+module.exports = router

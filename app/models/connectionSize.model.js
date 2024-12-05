@@ -13,6 +13,12 @@ module.exports = (sequelize, Sequelize) => {
       timestamps: true,           // automatically adds createdAt, updatedAt fields
       paranoid: true              // adds deletedAt for soft deletes
     });
-  
+    ConnectionSize.associate = (models) => {
+        // A connection can have many connection Sizes
+        ConnectionSize.hasMany(models.meter_services, {
+          foreignKey: 'connectionSize_id',
+          as: 'meter_services',
+        });
+      };
     return ConnectionSize;
   };

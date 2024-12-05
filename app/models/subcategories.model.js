@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         allowNull: false
       },
-      name: {
+      subcategory_name: {
         type: DataTypes.STRING,
         allowNull: false
       }
@@ -28,8 +28,8 @@ module.exports = (sequelize, DataTypes) => {
     Subcategories.associate = (models) => {
       // A subcategory belongs to one category
       Subcategories.belongsTo(models.categories, {
-        foreignKey: 'category_id',
         as: 'categories',
+        foreignKey: 'category_id',
       });
     };
   

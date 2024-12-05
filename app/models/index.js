@@ -22,5 +22,7 @@ db.sequelize = sequelize;
 db.tutorials = require("./tutorial.model.js")(sequelize, Sequelize);
 db.categories = require("./categories.model.js")(sequelize, Sequelize);
 db.subcategories = require("./subcategories.model.js")(sequelize, Sequelize);
+db.connectionSizes = require("./connectionSize.model.js")(sequelize, Sequelize);
+db.meterServices = require("./meterServices.model.js")(sequelize,Sequelize);
 
 module.exports = db;

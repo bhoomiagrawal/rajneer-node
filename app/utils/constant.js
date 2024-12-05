@@ -16,7 +16,7 @@ const constant = {
     Cms_Page_List: "Cms Page List",
     Cms_Page_successfully_update: "Cms Page successfully update",
     Invalid_page_number_should_start_with_1: "Invalid page number, should start with 1",
-    This_user_not_found: "This user not found",
+    // This_user_not_found: "This user not found",
     User_successfully_updated: "User successfully updated",
     Delete_user_successfully: "Delete user successfully",
     OTP_verified: "OTP verified",
@@ -66,9 +66,22 @@ const constant = {
     Category_Updated: "Category updated successfully",
     Category_Deleted: "Category deleted successfully",
 
+    Subcategory_not_found: "Subcategory not found",
     Subcategory_Added: " Subcategory added successfully",
     Subcategory_Updated: " Subcategory updated successfully",
     Subcategory_Deleted: " Subcategory deleted successfully",
+    Subcategory_not_found: "Subcategory not found",
+
+    connectionSize_Added: " connectionSize added successfully",
+    connectionSize_Updated: " connectionSize updated successfully",
+    connectionSize_Deleted: " connectionSize deleted successfully",
+    connectionSize_not_found: "connectionSize not found",
+
+    meterServiceCharge_Added: " meterServiceCharge added successfully",
+    meterServiceCharge_Updated: " meterServiceCharge updated successfully",
+    meterServiceCharge_Deleted: " meterServiceCharge deleted successfully",
+    meterServiceCharge_not_found: "meterServiceCharge not found",
+
 
     Attribute_Added: "Attribute added successfully",
     Attribute_Updated: "Attribute updated successfully",

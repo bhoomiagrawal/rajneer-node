@@ -1,25 +1,32 @@
 module.exports = (sequelize, Sequelize) => {
-    const meter_service_charges = sequelize.define("meter_service_charges", {
+    const meter_service_charges = sequelize.define("meter_services", {
       id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true
       },
-      connection_size: {
+      connectionSize_id: {
         type: Sequelize.STRING
       },
-      metere_service_charge: {
+      meter_service: {
         type: Sequelize.STRING
       },
       status: {
         type: Sequelize.INTEGER
       },
     }, {
-      tableName: 'meter_service_charges', // table name in the database
+      tableName: 'meter_service',  // table name in the database
       timestamps: true,           // automatically adds createdAt, updatedAt fields
       paranoid: true              // adds deletedAt for soft deletes
     });
   
+    meter_service_charges.associate = (models) => {
+      // A subcategory belongs to one category
+      meter_service_charges.belongsTo(models.connectionSizes, {
+        foreignKey: 'connectionSize_id',
+        as: 'connectionSizes',
+      });
+    };
     return meter_service_charges;
   };
   

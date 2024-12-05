@@ -20,9 +20,20 @@ module.exports = (sequelize, Sequelize) => {
   Categories.associate = (models) => {
     // A category can have many subcategories
     Categories.hasMany(models.subcategories, {
-      foreignKey: 'category_id',
       as: 'subcategories',
+      foreignKey: 'category_id',
     });
   };
   return Categories;
 };
+
+
+// Categories.hasMany(models.subcategories, {
+//   as: 'subcategories',
+//   foreignKey: 'category_id',
+// });
+
+// Categories.hasMany(models.subcategories, {
+//   as: 'categories',  // Change alias to 'categories'
+//   foreignKey: 'category_id',
+// });

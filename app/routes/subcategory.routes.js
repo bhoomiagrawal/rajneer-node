@@ -7,19 +7,9 @@ const authorize = require('../middleware/authorization');
 
 
 router.get("/", SubcategoryController.getAll);
-router.post("/", SubcategoryController.createSubcategory);
+router.post("/", SubcategoryController.create);
+router.put("/edit/:id", SubcategoryController.update);
+router.delete("/delete/:id", SubcategoryController.delete);
+router.get("/get/:id", SubcategoryController.getSingle);
 
-// router.route("/get")
-//     .get(protectAdmin, SubcategoryController.getAll);
-// router.route("/create")
-//     .post(protectAdmin, SubcategoryController.create);
-// router.route("/edit/:id")
-//     .put(protectAdmin, SubcategoryController.update);
-// router.route("/delete/:id")
-//     .delete(protectAdmin, SubcategoryController.delete);
-// router.route("/get/:id")
-//     .get(protectAdmin, SubcategoryController.getSingle);
-
-//   Delete all Subcategoryies
-//   router.delete("/",authorize(), SubcategoryController.deleteAll);
 module.exports = router
