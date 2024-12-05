@@ -23,7 +23,7 @@ const authorize = require('../middleware/authorization');
   router.delete("/:id", categories.delete);
 
   // Delete all Categories
-  router.delete("/",authorize(), categories.deleteAll);
+  // router.delete("/",authorize(), categories.deleteAll);
 
 
 module.exports = router;

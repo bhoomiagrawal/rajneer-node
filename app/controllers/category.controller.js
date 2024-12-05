@@ -117,33 +117,33 @@ exports.delete = (req, res) => {
     });
 };
 
-// Delete all Categories from the database.
-exports.deleteAll = (req, res) => {
-  Category.destroy({
-    where: {},
-    truncate: false
-  })
-    .then(nums => {
-      res.send({ message: `${nums} Categories were deleted successfully!` });
-    })
-    .catch(err => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while removing all categories."
-      });
-    });
-};
+// // Delete all Categories from the database.
+// exports.deleteAll = (req, res) => {
+//   Category.destroy({
+//     where: {},
+//     truncate: false
+//   })
+//     .then(nums => {
+//       res.send({ message: `${nums} Categories were deleted successfully!` });
+//     })
+//     .catch(err => {
+//       res.status(500).send({
+//         message:
+//           err.message || "Some error occurred while removing all categories."
+//       });
+//     });
+// };
 
-// find all published Category
-exports.findAllPublished = (req, res) => {
-  Category.findAll({ where: { published: true } })
-    .then(data => {
-      res.send(data);
-    })
-    .catch(err => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving categories."
-      });
-    });
-};
+// // find all published Category
+// exports.findAllPublished = (req, res) => {
+//   Category.findAll({ where: { published: true } })
+//     .then(data => {
+//       res.send(data);
+//     })
+//     .catch(err => {
+//       res.status(500).send({
+//         message:
+//           err.message || "Some error occurred while retrieving categories."
+//       });
+//     });
+// };
