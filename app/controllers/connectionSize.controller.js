@@ -4,6 +4,7 @@ const { Op, Sequelize } = require("sequelize");
 const message = require('../utils/constant');
 const { SELECT } = require("sequelize/lib/query-types");
 const connectionSizeValidation = require('../utils/validation').connectionSizeValidation;
+const { getPaginationAndSearch } = require('../utils/pagination');
 const db = require("../models");
 const ConnectionSize = db.connectionSizes;
 
@@ -45,50 +46,6 @@ exports.create = [
         }
     }
 ];
-
-
-exports.getAll = async (req, res) => {
-    try {
-        // console.log("hi this is display the all items", req?.query?.page)
-        let page = Number(req?.query?.page);
-        let perPage = Number(req?.query?.perPage);
-        let searchItem = req.query.searchItem;
-
-        if (searchItem) {
-            page = 0
-        }
-        if (page > 0) {
-            page = page * perPage
-        }
-
-        let ConnectionSizeList = await ConnectionSize.findAndCountAll({
-            offset: page,
-            limit: perPage,
-            where: {
-                [Op.or]: [
-                    { Connection_Size: { [Op.like]: "%" + searchItem + "%" } },
-                ]
-            }
-
-        })
-        if (!ConnectionSizeList) {
-            return res.status(404).json({
-                status: false,
-                message: message.Record_not_found
-            });
-        }
-        res.status(200).json({
-            status: true,
-            ConnectionSize: ConnectionSizeList,
-            message: message.Data_get_successfully
-        })
-    } catch (error) {
-        res.status(400).json({
-            status: false,
-            error: error.mesage
-        })
-    }
-}
 
 exports.update = [
     ...connectionSizeValidation,
@@ -184,3 +141,35 @@ exports.getSingle = async (req, res) => {
         })
     }
 }
+
+exports.getAll = async (req, res) => {
+    try {
+        // Use the helper to extract pagination and search information for the specific field ('Connection_Size')
+        const { offset, perPage, whereCondition } = getPaginationAndSearch(req, 'Connection_Size');  // Pass the field for search
+
+        // Fetch the connection size list with pagination and search filter
+        let connectionSizeList = await ConnectionSize.findAndCountAll({
+            offset: offset,
+            limit: perPage,
+            where: whereCondition,  // Apply search filter if exists
+        });
+
+        if (!connectionSizeList) {
+            return res.status(404).json({
+                status: false,
+                message: message.Record_not_found,
+            });
+        }
+
+        res.status(200).json({
+            status: true,
+            ConnectionSize: connectionSizeList,
+            message: message.Data_get_successfully,
+        });
+    } catch (error) {
+        res.status(400).json({
+            status: false,
+            error: error.message || message.Server_Error,
+        });
+    }
+};

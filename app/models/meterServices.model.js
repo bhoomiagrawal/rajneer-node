@@ -1,5 +1,5 @@
 module.exports = (sequelize, Sequelize) => {
-    const meter_service_charges = sequelize.define("meter_services", {
+    const meter_service_charges = sequelize.define("meterServices", {
       id: {
         type: Sequelize.INTEGER,
         primaryKey: true,

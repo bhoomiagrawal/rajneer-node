@@ -34,6 +34,6 @@ module.exports = (sequelize, DataTypes) => {
       as: 'category',
     });
   };
-
+  
   return Subcategories;
 };

@@ -3,6 +3,7 @@ const { Op, Sequelize, where } = require("sequelize");
 // const con = require('./../../config/database');
 const subcategoryValidation = require('../utils/validation').subcategoryValidation;
 const message = require('../utils/constant');
+const { getPaginationAndSearch } = require('../utils/pagination');
 const { SELECT } = require("sequelize/lib/query-types");
 const db = require("../models");
 const Category = db.categories;
@@ -47,109 +48,6 @@ exports.create = [
      }
 ]
 
-// exports.getAll = async (req, res) => {
-//     try {
-//         let page = Number(req?.query?.page) || 0;  // Default to 0 if not provided
-//         let perPage = Number(req?.query?.perPage) || 10;  // Default to 10 if not provided
-//         let searchItem = req.query.searchItem;
-
-//         // If searchItem is provided, reset page to 0 for a fresh search
-//         if (searchItem) {
-//             page = 0;
-//         }
-
-//         // Adjust page offset based on pagination
-//         let offset = page > 0 ? page * perPage : 0;
-
-//         // Fetch subcategory data with category information
-//         let subcategoryList = await Subcategory.findAndCountAll({
-//             offset: offset,
-//             limit: perPage,
-//             where: {
-//                 [Op.or]: [
-//                     { subcategory_name: { [Op.like]: "%" + searchItem + "%" } },
-//                     // Uncomment if you want to search by slug as well
-//                     // { slug: { [Op.like]: "%" + searchItem + "%" } }
-//                 ]
-//             },
-//             include: [
-//                 {
-//                     model: db.categories, // Include the associated Category data
-//                     as: 'categories',  // Alias for the relation (if defined in model)
-//                     attributes: ['id', 'category_name']  // Select the fields you want from the category
-//                 }
-//             ]
-//         });
-
-//         // Check if data was found
-//         if (!subcategoryList.rows.length) {
-//             return res.status(404).json({
-//                 status: false,
-//                 message: message.Record_not_found
-//             });
-//         }
-
-//         // Return the paginated data along with the category information
-//         res.status(200).json({
-//             status: true,
-//             subCategory: subcategoryList,
-//             message: message.Data_get_successfully
-//         });
-
-//     } catch (error) {
-//         console.log('Error fetching subcategories: ', error);
-//         res.status(500).json({
-//             status: false,
-//             error: error.message || message.Server_Error
-//         });
-//     }
-// };
-
-exports.getAll = async (req, res) => {
-    // console.log("hi this is display the all items", req?.query?.page)
-    try {
-        let page = Number(req?.query?.page);
-        let perPage = Number(req?.query?.perPage);
-        let searchItem = req.query.searchItem;
-
-        if (searchItem) {
-            page = 0
-        }
-        if (page > 0) {
-            page = page * perPage
-        }
-
-        let subcategoryList = await Subcategory.findAndCountAll({
-            offset: page,
-            limit: perPage,
-            where: {
-                [Op.or]: [
-                    { subcategory_name: { [Op.like]: "%" + searchItem + "%" } },
-                    // {slug: { [Op.like]: "%" + searchItem + "%" }}
-                ]
-            }
-
-        })
-        // console.log('subcategoryList', subcategoryList)
-        if (!subcategoryList) {
-            return res.status(404).json({
-                status: false,
-                message: message.Record_not_found
-            });
-        }
-        res.status(200).json({
-            status: true,
-            subCategory: subcategoryList,
-            message: message.Data_get_successfully
-        })
-    } catch (error) {
-        res.status(400).json({
-            status: false,
-            error: error.mesage
-        })
-    }
-}
-
 exports.update =[
     ...subcategoryValidation,
     async (req, res) => {
@@ -171,11 +69,6 @@ exports.update =[
                  category_id: req?.body?.category_id,
                  subcategory_name: req?.body?.subcategory_name,
              }
-
-
-        //    const data = {
-        //        subcategory_name: req?.body?.subcategory_name,
-        //    };
            const subcategory = await Subcategory.findByPk(req?.params?.id);
            if (!subcategory) {
                return res.status(404).json({
@@ -228,8 +121,20 @@ exports.delete = async (req, res) => {
 
 exports.getSingle = async (req, res) => {
     try {
-        const subcategory = await Subcategory.findByPk(req?.params?.id);
-        console.log('first', subcategory)
+        const subcategory = await Subcategory.findOne({
+            where:{
+                id: req?.params?.id
+            },
+            include: [
+                {
+                    model: db.categories, // Include the associated Category data
+                    as: 'category',  // Alias for the relation (if defined in model)
+                    // attributes: ['id', 'category_name']  // Select the fields you want from the category
+                }
+            ]
+        }
+        );
+        // console.log('first', subcategory)
         if (!subcategory) {
             return res.status(404).json({
                 message: message.Subcategory_not_found,
@@ -242,9 +147,52 @@ exports.getSingle = async (req, res) => {
             data: subcategory
         })
     } catch (error) {
+        // console.log(error)
         return res.status(500).json({
             status: false,
             message: message.Server_Error
         })
     }
 }
+
+exports.getAll = async (req, res) => {
+    try {
+        // Use the helper to extract pagination and search information
+        const { offset, perPage, whereCondition } = getPaginationAndSearch(req, 'subcategory_name');  // Pass the field for search
+
+        // Fetch the subcategory list with pagination and search filter
+        let subcategoryList = await Subcategory.findAndCountAll({
+            offset: offset,
+            limit: perPage,
+            where: whereCondition,  // Apply search filter if exists
+            include: [
+                {
+                    model: db.categories,  // Include the associated Category data
+                    as: 'category',  // Alias for the relation
+                }
+            ]
+        });
+
+        // Check if data was found
+        if (!subcategoryList.rows.length) {
+            return res.status(404).json({
+                status: false,
+                message: message.Record_not_found,
+            });
+        }
+
+        // Return the paginated data along with the category information
+        res.status(200).json({
+            status: true,
+            subCategory: subcategoryList,
+            message: message.Data_get_successfully,
+        });
+
+    } catch (error) {
+        // console.log('Error fetching subcategories: ', error);
+        res.status(500).json({
+            status: false,
+            error: error.message || message.Server_Error,
+        });
+    }
+};

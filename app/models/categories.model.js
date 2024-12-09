@@ -36,13 +36,3 @@ module.exports = (sequelize, Sequelize) => {
   return Categories;
 };
 
-
-// Categories.hasMany(models.subcategories, {
-//   as: 'subcategories',
-//   foreignKey: 'category_id',
-// });
-
-// Categories.hasMany(models.subcategories, {
-//   as: 'categories',  // Change alias to 'categories'
-//   foreignKey: 'category_id',
-// });

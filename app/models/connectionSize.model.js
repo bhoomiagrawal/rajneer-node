@@ -15,9 +15,9 @@ module.exports = (sequelize, Sequelize) => {
     });
     ConnectionSize.associate = (models) => {
         // A connection can have many connection Sizes
-        ConnectionSize.hasMany(models.meter_services, {
+        ConnectionSize.hasMany(models.meterServices, {
           foreignKey: 'connectionSize_id',
-          as: 'meter_services',
+          as: 'meterServices',
         });
       };
     return ConnectionSize;
