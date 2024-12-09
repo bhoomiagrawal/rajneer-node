@@ -189,12 +189,12 @@ exports.getAll = async (req, res) => {
         // });
          // Return the modified response with status and message inside subCategory object
          res.status(200).json({
-            subCategory: {
+            // subCategory: {
                 status: true,
                 message: message.Data_get_successfully,
-                data: subcategoryList.rows,  // Rename rows to data
+                subCategory: subcategoryList.rows,  // Rename rows to data
                 count: subcategoryList.count   // Include the total count
-            }
+            // }
         });
 
     } catch (error) {
