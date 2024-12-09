@@ -181,11 +181,20 @@ exports.getAll = async (req, res) => {
             });
         }
 
-        // Return the paginated data along with the category information
-        res.status(200).json({
-            status: true,
-            subCategory: subcategoryList,
-            message: message.Data_get_successfully,
+        // // Return the paginated data along with the category information
+        // res.status(200).json({
+        //     status: true,
+        //     subCategory: subcategoryList,status:true,
+        //     message: message.Data_get_successfully,
+        // });
+         // Return the modified response with status and message inside subCategory object
+         res.status(200).json({
+            subCategory: {
+                status: true,
+                message: message.Data_get_successfully,
+                data: subcategoryList.rows,  // Rename rows to data
+                count: subcategoryList.count   // Include the total count
+            }
         });
 
     } catch (error) {
