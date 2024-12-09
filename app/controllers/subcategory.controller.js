@@ -105,7 +105,23 @@ exports.delete = async (req, res) => {
                 status: false
             });
         }
+// const b4del= await Subcategory;
+// console.log('b4del', b4del)
         const deleteData = await Subcategory.destroy({ where: {id: req?.params?.id} });
+
+//         console.log('deleteData', deleteData)
+//         const afterdel= await Subcategory;
+// console.log('afterdel', afterdel)
+ // Check if any row was deleted (deleteData will be the count of affected rows)
+ console.log('deleteData', deleteData)
+ if (deleteData === 0) {
+    console.log('first')
+    return res.status(400).json({
+        message: message.Subcategory_not_deleted,  // You can define this message in your constants
+        status: false
+    });
+}
+// If deletion was successful, return a success response
         return res.status(200).json({
             status: true,
             message: message. Subcategory_Deleted

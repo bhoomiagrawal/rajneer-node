@@ -71,6 +71,7 @@ const constant = {
     Subcategory_Updated: " Subcategory updated successfully",
     Subcategory_Deleted: " Subcategory deleted successfully",
     Subcategory_not_found: "Subcategory not found",
+    Subcategory_not_deleted: "Subcategory not deleted",
 
     connectionSize_Added: " connectionSize added successfully",
     connectionSize_Updated: " connectionSize updated successfully",
@@ -81,6 +82,11 @@ const constant = {
     meterServiceCharge_Updated: " meterServiceCharge updated successfully",
     meterServiceCharge_Deleted: " meterServiceCharge deleted successfully",
     meterServiceCharge_not_found: "meterServiceCharge not found",
+
+    meterStatusCode_Added: " meter Status Code added successfully",
+    meterStatusCode_Updated: " meter Status Code updated successfully",
+    meterStatusCode_Deleted: " meter Statu sCode deleted successfully",
+    meterStatusCode_not_found: "meter Status Code not found",
 
 
     Attribute_Added: "Attribute added successfully",

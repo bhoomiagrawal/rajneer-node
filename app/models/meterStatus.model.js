@@ -1,5 +1,5 @@
 module.exports = (sequelize, Sequelize) => {
-    const meter_status_rules = sequelize.define("meter_status", {
+    const meter_status_rules = sequelize.define("meterStatus", {
       id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
@@ -18,7 +18,7 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.INTEGER
       },
     }, {
-      tableName: 'meter_status', // table name in the database
+      tableName: 'meterStatus', // table name in the database
       timestamps: true,           // automatically adds createdAt, updatedAt fields
       paranoid: true              // adds deletedAt for soft deletes
     });

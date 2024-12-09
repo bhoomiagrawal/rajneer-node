@@ -175,8 +175,9 @@ exports.getAll = async (req, res) => {
         }
         res.status(200).json({
             status: true,
-            meterService: meterServiceList,
-            message: message.Data_get_successfully
+            message: message.Data_get_successfully,
+            meterService: meterServiceList.rows,
+            count: meterServiceList.count,
         })
     } catch (error) {
         console.log('error', error)

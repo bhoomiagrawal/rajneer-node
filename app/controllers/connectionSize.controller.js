@@ -163,8 +163,9 @@ exports.getAll = async (req, res) => {
 
         res.status(200).json({
             status: true,
-            ConnectionSize: connectionSizeList,
             message: message.Data_get_successfully,
+            ConnectionSize: connectionSizeList.rows,
+            count: connectionSizeList.count,
         });
     } catch (error) {
         res.status(400).json({
