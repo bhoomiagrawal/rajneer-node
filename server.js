@@ -2,13 +2,25 @@ const express = require("express");
 const bodyParser = require('body-parser');
 const app = express();
 const cors = require("cors");
-var corsOptions = {
-  origin: "http://localhost:8081"
-};
 const db = require("./app/models");
 
 const loadRoutes = require('./app/routes');
 const logger = require('./app/middleware/logger');
+
+
+// var corsOptions = {
+//   origin: "http://localhost:8081"
+// };
+
+// Configure CORS
+const corsOptions = {
+  origin: '*', // Allow all origins. Replace '*' with a specific origin or array of origins for better security.
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Specify allowed HTTP methods
+  allowedHeaders: ['Content-Type', 'Authorization'], // Specify allowed headers
+};
+
+
+// Enable CORS with the options
 app.use(cors(corsOptions));
 // parse requests of content-type - application/json
 app.use(express.json());
@@ -28,6 +40,11 @@ db.sequelize.sync()
 // db.sequelize.sync({  alter: true , force: true,}).then(() => {
 //   console.log("Drop and re-sync db.");
 // });
+
+
+
+
+
 
 // simple route
 app.get("/", (req, res) => {
