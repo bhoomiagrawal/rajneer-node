@@ -1,11 +1,11 @@
 module.exports = (sequelize, Sequelize) => {
-    const ConnectionSize = sequelize.define("connectionSizes", {
+    const ConnectionSize = sequelize.define("connectionSize", {
       id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true
       },
-      Connection_Size: {
+      size: {
         type: Sequelize.STRING
       },      
     }, {

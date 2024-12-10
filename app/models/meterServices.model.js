@@ -26,9 +26,9 @@ module.exports = (sequelize, Sequelize) => {
   
     meter_service_charges.associate = (models) => {
       // A subcategory belongs to one category
-      meter_service_charges.belongsTo(models.connectionSizes, {
+      meter_service_charges.belongsTo(models.connectionSize, {
         foreignKey: 'connectionSize_id',
-        as: 'connectionSizes',
+        as: 'connectionSize',
       });
     };
     return meter_service_charges;
