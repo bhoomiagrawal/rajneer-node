@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken'); // For verifying tokens
-const User = require('../models/user.model'); // Import User model (optional for role checks)
+const User = require('../models/users.model'); // Import User model (optional for role checks)
 
 // Middleware for authorization
 const authorize = (roles = []) => {

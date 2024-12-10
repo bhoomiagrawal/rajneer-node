@@ -1,4 +1,5 @@
 const db = require("../models");
+const { sendResponse } = require("../utils/lib");
 const Category = db.categories;
 const Op = db.Sequelize.Op;
 
@@ -18,7 +19,7 @@ exports.create = (req, res) => {
   // Save Category in the database
   Category.create({category_name, category_code})
     .then(data => {
-      res.send(data);
+      sendResponse(res, data)
     })
     .catch(err => {
       res.status(500).send({
