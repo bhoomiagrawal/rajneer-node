@@ -9,7 +9,7 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.STRING
       },      
     }, {
-      tableName: 'connectionSizes', // table name in the database
+      tableName: 'connection_size', // table name in the database
       timestamps: true,           // automatically adds createdAt, updatedAt fields
       paranoid: true              // adds deletedAt for soft deletes
     });

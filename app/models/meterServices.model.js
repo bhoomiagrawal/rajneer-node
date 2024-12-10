@@ -6,7 +6,11 @@ module.exports = (sequelize, Sequelize) => {
         autoIncrement: true
       },
       connectionSize_id: {
-        type: Sequelize.STRING
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'connectionSizes',
+          key: 'id',
+        },
       },
       meter_service: {
         type: Sequelize.STRING
