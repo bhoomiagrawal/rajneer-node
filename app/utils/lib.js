@@ -1,12 +1,17 @@
-exports.sendResponse = (response, message, status=200, ) => {
-    return response.status(status).json({
+exports.sendResponse = (response, dt, message="successfull", status=200, ) => {
+    let data = {
         message,
         status,
+        data: dt
+
+    }
+    return response.status(status).json({
+       data
     })
 
 }
 
-exports.sendErrorResponse = (response, message, error, status=500, ) => {
+exports.sendErrorResponse = (response, error, message="Some error occurred", status=500, ) => {
     return response.status(status).json({
         message,
         error,
