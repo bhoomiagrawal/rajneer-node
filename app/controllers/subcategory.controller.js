@@ -5,6 +5,7 @@ const subcategoryValidation = require('../utils/validation').subcategoryValidati
 const message = require('../utils/constant');
 const { getPaginationAndSearch } = require('../utils/pagination');
 const { SELECT } = require("sequelize/lib/query-types");
+const { sendErrorResponse } = require("../utils/lib");
 const db = require("../models");
 const Category = db.categories;
 const Subcategory = db.subcategories;
@@ -18,25 +19,25 @@ exports.create = [
             // Check for validation errors
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
-                return res.status(400).json({
-                    status: false,
-                    errors: errors.array()
-                });
+                return sendErrorResponse(res, errors.array(), 401)
             }
+            // Check for category id exist or not
             const catData = await Category.findByPk(req.body.category_id);
+            console.log('req.body.category_id', req.body.category_id)
             if (!catData) {
-                return res.status(404).json({ message: 'Category not found' });
+                return sendErrorResponse(res, "Category not found", 401)
             }
             const temp = {
                 category_id: req?.body?.category_id,
                 subcategory_name: req?.body?.subcategory_name,
             }
             let data = await Subcategory.create(temp, { new: true });
-            return res.status(200).json({
-                status: true,
-                subcategory: data,
-                message: message.Subcategory_Added
-            })
+            return sendResponse(res, data)
+            // return res.status(200).json({
+            //     status: true,
+            //     subcategory: data,
+            //     message: message.Subcategory_Added
+            // })
         } catch (error) {
             // console.log('error', error)
             return res.status(500).json({

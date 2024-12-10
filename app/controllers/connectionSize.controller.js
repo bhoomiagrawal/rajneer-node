@@ -5,8 +5,9 @@ const message = require('../utils/constant');
 const { SELECT } = require("sequelize/lib/query-types");
 const connectionSizeValidation = require('../utils/validation').connectionSizeValidation;
 const { getPaginationAndSearch } = require('../utils/pagination');
+const { sendResponse, sendErrorResponse } = require("../utils/lib");
 const db = require("../models");
-const ConnectionSize = db.connectionSizes;
+const ConnectionSize = db.connectionSize;
 
 
 
@@ -18,31 +19,34 @@ exports.create = [
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
                 // console.log('errors', errors[msg])
-                return res.status(400).json({
-                    status: false,
-                    // errors: errors.msg
-                    errors: errors.array()
-                });
+                return sendErrorResponse(res, errors.msg, 401)
+                // return res.status(400).json({
+                //     status: false,
+                //     // errors: errors.msg
+                //     errors: errors.array()
+                // });
             }
-
+console.log('req.body', req.body)
             // Proceed with the creation logic if validation passes
             const temp = {
-                Connection_Size: req.body.Connection_Size,
+                size: req.body.size,
             };
 
             let data = await ConnectionSize.create(temp, { new: true });
 
-            return res.status(200).json({
-                status: true,
-                ConnectionSize: data,
-                message: message.connectionSize_Added
-            });
+            return sendResponse(res, data)
+            // return res.status(200).json({
+            //     status: true,
+            //     ConnectionSize: data,
+            //     message: message.connectionSize_Added
+            // });
         } catch (error) {
-            return res.status(500).json({
-                message: message.Server_Error,
-                status: false,
-                error: error
-            });
+           return sendErrorResponse(res,error,message.Server_Error,500)
+            // return res.status(500).json({
+            //     message: message.Server_Error,
+            //     status: false,
+            //     error: error
+            // });
         }
     }
 ];
@@ -66,7 +70,7 @@ exports.update = [
             //      });
             //  }
             const data = {
-                Connection_Size: req?.body?.Connection_Size,
+                size: req?.body?.size,
             };
             // console.log(req?.params?.id,'data', data)
             const connectionSize = await ConnectionSize.findByPk(req?.params?.id);
@@ -153,7 +157,8 @@ exports.getAll = async (req, res) => {
             limit: perPage,
             where: whereCondition,  // Apply search filter if exists
         });
-
+const data = await ConnectionSize.findAll({});
+console.log('data', data)
         if (!connectionSizeList) {
             return res.status(404).json({
                 status: false,

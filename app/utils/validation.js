@@ -6,7 +6,7 @@ exports.subcategoryValidation = [
     body('subcategory_name').notEmpty().withMessage('Subcategory Is Required.')
 ];
 exports.connectionSizeValidation = [
-    body('Connection_Size').notEmpty().withMessage('Connection Size Is Required.')
+    body('size').notEmpty().withMessage('Connection Size Is Required.')
 ];
 
 exports.meterServiceChargeValidation = [

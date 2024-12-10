@@ -11,11 +11,15 @@ exports.sendResponse = (response, dt, message="successfull", status=200, ) => {
 
 }
 
-exports.sendErrorResponse = (response, error, message="Some error occurred", status=500, ) => {
-    return response.status(status).json({
+exports.sendErrorResponse = (response, err, status=500, message="Some error occurred",  ) => {
+    let error = {
         message,
-        error,
         status,
+        err,
+
+    }
+    return response.status(status).json({
+       error
     })
 
 }

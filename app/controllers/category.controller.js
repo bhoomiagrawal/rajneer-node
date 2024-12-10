@@ -31,13 +31,13 @@ exports.create = (req, res) => {
 
 // Retrieve all Categories from the database.
 exports.findAll = (req, res) => {
-  console.log('req', req)
+  // console.log('req', req)
   const title = req.query.title;
   var condition = title ? { title: { [Op.like]: `%${title}%` } } : null;
-console.log('Category', Category)
+// console.log('Category', Category)
   Category.findAll({ where: condition })
     .then(data => {
-      res.send(data);
+      sendResponse(res, data)
     })
     .catch(err => {
       res.status(500).send({

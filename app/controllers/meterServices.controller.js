@@ -4,7 +4,8 @@ const message = require('../utils/constant');
 const meterServiceChargeValidation = require('../utils/validation').meterServiceChargeValidation;
 const {getPaginationAndSearch} = require('../utils/pagination')
 const db = require("../models");
-const ConnectionSize = db.connectionSizes;
+const { sendErrorResponse } = require("../utils/lib");
+const ConnectionSize = db.connectionSize;
 const MeterServiceCharge = db.meterServices;
 
 
@@ -22,6 +23,8 @@ exports.create = [
             }
             const connSizeData = await ConnectionSize.findByPk(req.body.connectionSize_id);
             if (!connSizeData) {
+                return sendErrorResponse(res, "Connection Size not found", 401)
+
                 return res.status(404).json({ message: 'Connection Size not found' });
             }
             const temp = {
@@ -82,7 +85,7 @@ exports.update = [
                 include: [
                 {
                     model: db.connectionSizes,  // Include the associated Category data
-                    as: 'connectionSizes',  // Alias for the relation
+                    as: 'connectionSize',  // Alias for the relation
                 }
             ]});
             // const updatedserviceCharge = await MeterServiceCharge.findByPk(req?.params?.id);
@@ -134,7 +137,7 @@ exports.getSingle = async (req, res) => {
             include: [
             {
                 model: db.connectionSizes,  // Include the associated Category data
-                as: 'connectionSizes',  // Alias for the relation
+                as: 'connectionSize',  // Alias for the relation
             }
         ]});
         // console.log('first', meterServiceData)
@@ -170,7 +173,7 @@ exports.getAll = async (req, res) => {
             include: [
                 {
                     model: db.connectionSizes,  // Include the associated Category data
-                    as: 'connectionSizes',  // Alias for the relation
+                    as: 'connectionSize',  // Alias for the relation
                 }
             ]
         });

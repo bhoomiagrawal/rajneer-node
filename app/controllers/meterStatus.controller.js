@@ -50,54 +50,58 @@ exports.create = [
     }
 ];
 
-// exports.update = [
-//     ...meterStatusValidation,
-//     async (req, res) => {
-//         //         console.log('body name', req.body.name)
-//         //         console.log('PARAMS',req)
-//         //         console.log('Query ID',req.params.id)
+exports.update = [
+    // ...meterStatusValidation,
+    async (req, res) => {
+        //         console.log('body name', req.body.name)
+        //         console.log('PARAMS',req)
+        //         console.log('Query ID',req.params.id)
 
-//         try {
-//             // Check for validation errors
-//             const errors = validationResult(req);
-//             if (!errors.isEmpty()) {
-//                 // console.log('errors', errors[msg])
-//                 return res.status(400).json({
-//                     status: false,
-//                     // errors: errors.msg
-//                     errors: errors.array()
-//                 });
-//             }
-//             const data = {
-//                 Connection_Size: req?.body?.Connection_Size,
-//             };
-//             // console.log(req?.params?.id,'data', data)
-//             const connectionSize = await ConnectionSize.findByPk(req?.params?.id);
-//             // console.log('first', connectionSize)
-//             if (!connectionSize) {
-//                 return res.status(404).json({
-//                     message: message.connectionSize_not_found,
-//                     status: false
-//                 });
-//             }
-//             // Update the connectionSize with the new fields
-//             await connectionSize.update(data);
-//             const updatedConnectionSize = await ConnectionSize.findByPk(req?.params?.id);
-//             // console.log("connectionSize after update", updatedConnectionSize);
-//             return res.status(200).json({
-//                 status: true,
-//                 connectionSize: updatedConnectionSize,
-//                 message: message.connectionSize_Updated,
-//             });
-//         } catch (error) {
-//             return res.status(500).json({
-//                 message: message.Server_Error,
-//                 status: false,
-//                 error: error
-//             });
-//         }
-//     }
-// ]
+        try {
+            // Check for validation errors
+            // const errors = validationResult(req);
+            // if (!errors.isEmpty()) {
+            //     // console.log('errors', errors[msg])
+            //     return res.status(400).json({
+            //         status: false,
+            //         // errors: errors.msg
+            //         errors: errors.array()
+            //     });
+            // }
+            const data = {
+                meter_status: req?.body?.meter_status,
+                rule: req?.body?.rule,
+                description: req?.body?.description,
+                status: req?.body?.status,
+            };
+            console.log(req?.params?.id,'data', data)
+            // console.log(req?.params?.id,'data', data)
+            const meterStatus = await meteStatusCode.findByPk(req?.params?.id);
+            // console.log('first', connectionSize)
+            if (!meterStatus) {
+                return res.status(404).json({
+                    message: message.meterStatus_not_found,
+                    status: false
+                });
+            }
+            // Update the meterStatus with the new fields
+            await meterStatus.update(data);
+            const updatedmeterStatus = await meteStatusCode.findByPk(req?.params?.id);
+            // console.log("meterStatus after update", updatedmeterStatus);
+            return res.status(200).json({
+                status: true,
+                meterStatus: updatedmeterStatus,
+                message: message.meterStatusCode_Updated,
+            });
+        } catch (error) {
+            return res.status(500).json({
+                message: message.Server_Error,
+                status: false,
+                error: error
+            });
+        }
+    }
+]
 
 // exports.delete = async (req, res) => {
 //     try {
