@@ -56,13 +56,13 @@ exports.update = [
     
         try {
             // Check for validation errors
-            const errors = validationResult(req);
-            if (!errors.isEmpty()) {
-                return res.status(400).json({
-                    status: false,
-                    errors: errors.array()
-                });
-            }
+            // const errors = validationResult(req);
+            // if (!errors.isEmpty()) {
+            //     return res.status(400).json({
+            //         status: false,
+            //         errors: errors.array()
+            //     });
+            // }
             const data = {
                 connectionSize_id: req?.body?.connectionSize_id,
                 meter_service: req?.body?.meter_service,
@@ -77,7 +77,15 @@ exports.update = [
             }
             // Update the subcategory with the new fields
             await serviceCharge.update(data);
-            const updatedserviceCharge = await MeterServiceCharge.findByPk(req?.params?.id);
+            const updatedserviceCharge = await MeterServiceCharge.findOne({
+                where:{id:req?.params?.id}, 
+                include: [
+                {
+                    model: db.connectionSizes,  // Include the associated Category data
+                    as: 'connectionSizes',  // Alias for the relation
+                }
+            ]});
+            // const updatedserviceCharge = await MeterServiceCharge.findByPk(req?.params?.id);
             console.log("serviceCharge after update", updatedserviceCharge);
             return res.status(200).json({
                 status: true,

@@ -23,8 +23,13 @@ const getPaginationAndSearch = (req, searchField = 'subcategory_name') => {
     if (searchItem) {
         // If searchItem is provided, apply search filter dynamically based on the field
         whereCondition = {
-            [Op.or]: [
-                { [searchField]: { [Op.like]: "%" + searchItem + "%" } }
+            [Op.and]: [
+                { deletedAt: null },  // Ensure deletedAt = null
+                {
+                    [Op.or]: [
+                        { [searchField]: { [Op.like]: "%" + searchItem + "%" } }
+                    ]
+                }
             ]
         };
     }

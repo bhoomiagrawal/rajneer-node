@@ -11,10 +11,10 @@ const Subcategory = db.subcategories;
 
 
 exports.create = [
-     // Use the imported validation middleware
-     ...subcategoryValidation,
-     async (req, res) => {
-         try {
+    // Use the imported validation middleware
+    ...subcategoryValidation,
+    async (req, res) => {
+        try {
             // Check for validation errors
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
@@ -23,81 +23,94 @@ exports.create = [
                     errors: errors.array()
                 });
             }
-             const catData = await Category.findByPk(req.body.category_id);
-             if (!catData) {
-                 return res.status(404).json({ message: 'Category not found' });
-             }
-             const temp = {
-                 category_id: req?.body?.category_id,
-                 subcategory_name: req?.body?.subcategory_name,
-             }
-             let data = await Subcategory.create(temp, { new: true });
-             return res.status(200).json({
-                 status: true,
-                 subcategory: data,
-                 message: message.Subcategory_Added
-             })
-         } catch (error) {
+            const catData = await Category.findByPk(req.body.category_id);
+            if (!catData) {
+                return res.status(404).json({ message: 'Category not found' });
+            }
+            const temp = {
+                category_id: req?.body?.category_id,
+                subcategory_name: req?.body?.subcategory_name,
+            }
+            let data = await Subcategory.create(temp, { new: true });
+            return res.status(200).json({
+                status: true,
+                subcategory: data,
+                message: message.Subcategory_Added
+            })
+        } catch (error) {
             // console.log('error', error)
-             return res.status(500).json({
-                 message: message.Server_Error,
-                 status: false,
-                 error: error
-             })
-         }
-     }
+            return res.status(500).json({
+                message: message.Server_Error,
+                status: false,
+                error: error
+            })
+        }
+    }
 ]
 
-exports.update =[
-    ...subcategoryValidation,
+exports.update = [
+    // ...subcategoryValidation,
     async (req, res) => {
         // Check for validation errors
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({
+        // const errors = validationResult(req);
+        // if (!errors.isEmpty()) {
+        //     return res.status(400).json({
+        //         status: false,
+        //         errors: errors.array()
+        //     });
+        // }
+
+        try {
+            const catData = await Category.findByPk(req.body.category_id);
+            if (!catData) {
+                return res.status(404).json({ message: 'Category not found' });
+            }
+            const data = {
+                category_id: req?.body?.category_id,
+                subcategory_name: req?.body?.subcategory_name,
+            }
+            const subcategory = await Subcategory.findByPk(req?.params?.id);
+            if (!subcategory) {
+                return res.status(404).json({
+                    message: message.Subcategory_not_found,
+                    status: false
+                });
+            }
+            // Update the subcategory with the new fields
+            await subcategory.update(data);
+
+            const updatedSubcategory = await Subcategory.findOne({
+                where: {
+                    id: req?.params?.id
+                },
+                include: [
+                    {
+                        model: db.categories, // Include the associated Category data
+                        as: 'category',  // Alias for the relation (if defined in model)
+                        // attributes: ['id', 'category_name']  // Select the fields you want from the category
+                    }
+                ]
+            }
+            );
+            // console.log("subcategory after update", updatedSubcategory);
+            return res.status(200).json({
+                status: true,
+                subcategory: updatedSubcategory,
+                message: message.Subcategory_Updated,
+            });
+        } catch (error) {
+            console.log('error', error)
+            return res.status(500).json({
+                message: message.Server_Error,
                 status: false,
-                errors: errors.array()
+                error: error
             });
         }
-   
-       try {
-            const catData = await Category.findByPk(req.body.category_id);
-             if (!catData) {
-                 return res.status(404).json({ message: 'Category not found' });
-             }
-             const data = {
-                 category_id: req?.body?.category_id,
-                 subcategory_name: req?.body?.subcategory_name,
-             }
-           const subcategory = await Subcategory.findByPk(req?.params?.id);
-           if (!subcategory) {
-               return res.status(404).json({
-                   message: message.Subcategory_not_found,
-                   status: false
-               });
-           }
-           // Update the subcategory with the new fields
-           await subcategory.update(data);
-           const updatedSubcategory = await Subcategory.findByPk(req?.params?.id);
-           // console.log("subcategory after update", updatedSubcategory);
-           return res.status(200).json({
-               status: true,
-               subcategory: updatedSubcategory,
-               message: message.Subcategory_Updated,
-           });
-       } catch (error) {
-        console.log('error', error)
-           return res.status(500).json({
-               message: message.Server_Error,
-               status: false,
-               error: error
-           });
-       }
-   }
+    }
 ]
 
 exports.delete = async (req, res) => {
-    try{
+    try {
         const subcategory = await Subcategory.findByPk(req?.params?.id);
         if (!subcategory) {
             return res.status(404).json({
@@ -105,26 +118,26 @@ exports.delete = async (req, res) => {
                 status: false
             });
         }
-// const b4del= await Subcategory;
-// console.log('b4del', b4del)
-        const deleteData = await Subcategory.destroy({ where: {id: req?.params?.id} });
+        // const b4del= await Subcategory;
+        // console.log('b4del', b4del)
+        const deleteData = await Subcategory.destroy({ where: { id: req?.params?.id } });
 
-//         console.log('deleteData', deleteData)
-//         const afterdel= await Subcategory;
-// console.log('afterdel', afterdel)
- // Check if any row was deleted (deleteData will be the count of affected rows)
- console.log('deleteData', deleteData)
- if (deleteData === 0) {
-    console.log('first')
-    return res.status(400).json({
-        message: message.Subcategory_not_deleted,  // You can define this message in your constants
-        status: false
-    });
-}
-// If deletion was successful, return a success response
+        //         console.log('deleteData', deleteData)
+        //         const afterdel= await Subcategory;
+        // console.log('afterdel', afterdel)
+        // Check if any row was deleted (deleteData will be the count of affected rows)
+        console.log('deleteData', deleteData)
+        if (deleteData === 0) {
+            console.log('first')
+            return res.status(400).json({
+                message: message.Subcategory_not_deleted,  // You can define this message in your constants
+                status: false
+            });
+        }
+        // If deletion was successful, return a success response
         return res.status(200).json({
             status: true,
-            message: message. Subcategory_Deleted
+            message: message.Subcategory_Deleted
         });
     } catch (error) {
         return res.status(500).json({
@@ -138,7 +151,7 @@ exports.delete = async (req, res) => {
 exports.getSingle = async (req, res) => {
     try {
         const subcategory = await Subcategory.findOne({
-            where:{
+            where: {
                 id: req?.params?.id
             },
             include: [
@@ -203,13 +216,13 @@ exports.getAll = async (req, res) => {
         //     subCategory: subcategoryList,status:true,
         //     message: message.Data_get_successfully,
         // });
-         // Return the modified response with status and message inside subCategory object
-         res.status(200).json({
+        // Return the modified response with status and message inside subCategory object
+        res.status(200).json({
             // subCategory: {
-                status: true,
-                message: message.Data_get_successfully,
-                subCategory: subcategoryList.rows,  // Rename rows to data
-                count: subcategoryList.count   // Include the total count
+            status: true,
+            message: message.Data_get_successfully,
+            subCategory: subcategoryList.rows,  // Rename rows to data
+            count: subcategoryList.count   // Include the total count
             // }
         });
 
