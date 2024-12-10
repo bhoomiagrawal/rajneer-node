@@ -1,5 +1,5 @@
 const db = require("../models");
-const { sendResponse } = require("../utils/lib");
+const { sendResponse, sendErrorResponse } = require("../utils/lib");
 const Category = db.categories;
 const Op = db.Sequelize.Op;
 
@@ -15,17 +15,15 @@ exports.create = (req, res) => {
 
   // Create a Category
 
-  let { category_name, category_code,} = req.body
+  let { category_name, category_code, } = req.body
   // Save Category in the database
-  Category.create({category_name, category_code})
+  Category.create({ category_name, category_code })
     .then(data => {
       sendResponse(res, data)
     })
     .catch(err => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while creating the Category."
-      });
+      sendErrorResponse(res, err)
+
     });
 };
 
@@ -40,10 +38,8 @@ exports.findAll = (req, res) => {
       sendResponse(res, data)
     })
     .catch(err => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving categories."
-      });
+      sendErrorResponse(res, err)
+
     });
 };
 
@@ -54,17 +50,17 @@ exports.findOne = (req, res) => {
   Category.findByPk(id)
     .then(data => {
       if (data) {
-        res.send(data);
+        sendResponse(res, data)
+
       } else {
-        res.status(404).send({
-          message: `Cannot find Category with id=${id}.`
-        });
+        sendErrorResponse(res, "Error", `Cannot find Category with id=${id}.`, 404,)
+
+
       }
     })
     .catch(err => {
-      res.status(500).send({
-        message: "Error retrieving Category with id=" + id
-      });
+      sendErrorResponse(res, err)
+
     });
 };
 
@@ -80,6 +76,7 @@ exports.update = (req, res) => {
         res.send({
           message: "Category was updated successfully."
         });
+        
       } else {
         res.send({
           message: `Cannot update Category with id=${id}. Maybe Category was not found or req.body is empty!`
