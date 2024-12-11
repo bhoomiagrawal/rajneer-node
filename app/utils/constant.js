@@ -65,6 +65,8 @@ const constant = {
     Category_Added: "Category added successfully",
     Category_Updated: "Category updated successfully",
     Category_Deleted: "Category deleted successfully",
+    Category_not_found: "Category not found",
+    Category_not_deleted: "Category not deleted",
 
     Subcategory_not_found: "Subcategory not found",
     Subcategory_Added: " Subcategory added successfully",
