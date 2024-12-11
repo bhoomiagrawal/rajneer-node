@@ -84,7 +84,7 @@ exports.update = [
                 where:{id:req?.params?.id}, 
                 include: [
                 {
-                    model: db.connectionSizes,  // Include the associated Category data
+                    model: db.connectionSize,  // Include the associated Category data
                     as: 'connectionSize',  // Alias for the relation
                 }
             ]});
@@ -136,7 +136,7 @@ exports.getSingle = async (req, res) => {
             where:{id:req?.params?.id}, 
             include: [
             {
-                model: db.connectionSizes,  // Include the associated Category data
+                model: db.connectionSize,  // Include the associated Category data
                 as: 'connectionSize',  // Alias for the relation
             }
         ]});
@@ -172,7 +172,7 @@ exports.getAll = async (req, res) => {
             where: whereCondition,  // Apply search filter if exists
             include: [
                 {
-                    model: db.connectionSizes,  // Include the associated Category data
+                    model: db.connectionSize,  // Include the associated Category data
                     as: 'connectionSize',  // Alias for the relation
                 }
             ]

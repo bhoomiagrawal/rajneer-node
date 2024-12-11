@@ -37,7 +37,7 @@ db.sequelize.sync()
   });
 
 // drop the table if it already exists
-db.sequelize.sync({  alter: true , force: true,}).then(() => {
+db.sequelize.sync({   force: true,}).then(() => {
   console.log("Drop and re-sync db.");
 });
 

@@ -1,6 +1,6 @@
 module.exports = (sequelize, Sequelize) => {
   const TariffConfiguration = sequelize.define(
-    'tariffConfiguration', // Ensure this matches the reference in `models`
+    'tariffConfiguration', 
     {
       id: {
         type: Sequelize.INTEGER,
@@ -36,10 +36,6 @@ module.exports = (sequelize, Sequelize) => {
       },
       ratePerThousand: {
         type: Sequelize.STRING,
-        // references: {
-        //   model: 'categories',
-        //   key: 'id',
-        // },
         allowNull: false,
       },
       created_by: {
@@ -60,7 +56,7 @@ module.exports = (sequelize, Sequelize) => {
 
   TariffConfiguration.associate = (models) => {
     TariffConfiguration.belongsTo(models.users, {
-      foreignKey: 'sso_id',
+      foreignKey: 'created_by',
       as: 'user_sso',
     });
   };
