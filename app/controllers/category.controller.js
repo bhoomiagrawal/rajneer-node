@@ -4,6 +4,7 @@ const { getPaginationAndSearch } = require("../utils/pagination");
 const message = require('../utils/constant');
 
 const { categoryValidation } = require("../utils/validation");
+const { validationResult } = require("express-validator");
 const Category = db.categories;
 const Op = db.Sequelize.Op;
 
@@ -33,6 +34,7 @@ exports.create = [
       let data = await Category.create({ category_name, category_code }, { new: true });
       return sendResponse({ res, data })
     } catch (err) {
+      console.log('err', err)
       return sendErrorResponse({ res, err })
     }
   }
