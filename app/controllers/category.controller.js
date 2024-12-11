@@ -15,11 +15,9 @@ const Op = db.Sequelize.Op;
 
 
 // Create and Save a new Category
-exports.create = (req, res) => [
-
-  // Use the imported validation middleware
-  ...categoryValidation,
-
+exports.create = [
+    // Use the imported validation middleware
+    ...categoryValidation,
   async (req, res) => {
 
     // Create a Category
@@ -37,7 +35,9 @@ exports.create = (req, res) => [
     } catch (err) {
       return sendErrorResponse({ res, err })
     }
-  }]
+  }
+]
+
 
 // Retrieve all Categories from the database.
 exports.getAll = async (req, res) => {
