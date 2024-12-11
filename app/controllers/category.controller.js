@@ -1,5 +1,8 @@
 const db = require("../models");
 const { sendResponse, sendErrorResponse } = require("../utils/lib");
+const { getPaginationAndSearch } = require("../utils/pagination");
+const message = require('../utils/constant');
+
 const { categoryValidation } = require("../utils/validation");
 const Category = db.categories;
 const Op = db.Sequelize.Op;
@@ -27,131 +30,173 @@ exports.create = (req, res) => [
       // Check for validation errors
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return sendErrorResponse({res, err:errors.array(), status:401})
+        return sendErrorResponse({ res, err: errors.array(), status: 401 })
       }
-
-      let data = await Subcategory.create({ category_name, category_code }, { new: true });
-      return sendResponse({res, data})
+      let data = await Category.create({ category_name, category_code }, { new: true });
+      return sendResponse({ res, data })
     } catch (err) {
       return sendErrorResponse({ res, err })
     }
   }]
 
 // Retrieve all Categories from the database.
-exports.findAll = (req, res) => {
-  // console.log('req', req)
-  const title = req.query.title;
-  var condition = title ? { title: { [Op.like]: `%${title}%` } } : null;
-  // console.log('Category', Category)
-  Category.findAll({ where: condition })
-    .then(data => {
-      sendResponse({res, data})
-    })
-    .catch(err => {
-      sendErrorResponse({res, err})
+exports.getAll = async (req, res) => {
+
+  try {
+    // Use the helper to extract pagination and search information
+    const { offset, perPage, whereCondition } = getPaginationAndSearch(req, 'category_name');  // Pass the field for search
+
+    // Fetch the category list with pagination and search filter
+    let categoryList = await Category.findAndCountAll({
+      offset,
+      limit: perPage,
+      where: whereCondition,  // Apply search filter if exists
 
     });
-};
 
-// Find a single Category with an id
-exports.findOne = (req, res) => {
-  const id = req.params.id;
+    // Check if data was found
+    if (!categoryList.rows.length) {
+      return sendErrorResponse({
+        res,
+        msg: message.Record_not_found,
+        status: 404
+      })
 
-  Category.findByPk(id)
-    .then(data => {
-      if (data) {
-        sendResponse({res, data})
+    }
 
-      } else {
-        sendErrorResponse({res,  msg: `Cannot find Category with id=${id}.`, status : 404})
-
-
+    return sendResponse({
+      res, data: {
+        category: categoryList.rows,  // Rename rows to data
+        count: categoryList.count
       }
     })
-    .catch(err => {
-      sendErrorResponse({res, err})
 
-    });
+  } catch (error) {
+    // console.log('Error fetching subcategories: ', error);
+    sendErrorResponse({ res, err: error.message })
+
+  }
+
+
 };
+
+
+
+exports.getSingle = async (req, res) => {
+  try {
+    const category = await Category.findOne({
+      where: {
+        id: req?.params?.id
+      },
+
+    }
+    );
+
+    if (!category) {
+      return sendErrorResponse({
+        res, msg: message.Category_not_found
+      })
+
+    }
+    return sendResponse({
+      res, data: category
+    })
+  } catch (err) {
+    // console.log(error)
+    return sendErrorResponse({
+      res, err
+    })
+  }
+}
+
+
+
+
+
 
 // Update a Category by the id in the request
-exports.update = (req, res) => {
-  const id = req.params.id;
+exports.update = [
+  // ...categoryValidation,
+  async (req, res) => {
+    // Check for validation errors
+    // const errors = validationResult(req);
+    // if (!errors.isEmpty()) {
+    //     return res.status(400).json({
+    //         status: false,
+    //         errors: errors.array()
+    //     });
+    // }
 
-  Category.update(req.body, {
-    where: { id: id }
-  })
-    .then(num => {
-      if (num == 1) {
-        res.send({
-          message: "Category was updated successfully."
-        });
+    try {
+      const id = req.params.id;
 
-      } else {
-        res.send({
-          message: `Cannot update Category with id=${id}. Maybe Category was not found or req.body is empty!`
-        });
+
+      const category = await Category.findByPk(id);
+      if (!category) {
+        return sendErrorResponse({
+          res, msg: message.Category_not_found
+        })
+
       }
-    })
-    .catch(err => {
-      res.status(500).send({
-        message: "Error updating Category with id=" + id
-      });
-    });
-};
+      // Update the category with the new fields
+      await category.update({ ...req.body });
+
+      const updatedCategory = await Category.findOne({
+        where: {
+          id
+        },
+
+      }
+      );
+      return sendResponse({
+        res, data: {
+          category: updatedCategory,
+          message: message.Category_Updated,
+        }
+      })
+
+    } catch (err) {
+      return sendErrorResponse({ res, err })
+
+    }
+  }
+]
+
+
 
 // Delete a Category with the specified id in the request
-exports.delete = (req, res) => {
-  const id = req.params.id;
 
-  Category.destroy({
-    where: { id: id }
-  })
-    .then(num => {
-      if (num == 1) {
-        res.send({
-          message: "Category was deleted successfully!"
-        });
-      } else {
-        res.send({
-          message: `Cannot delete Category with id=${id}. Maybe Category was not found!`
-        });
-      }
+
+
+
+exports.delete = async (req, res) => {
+  try {
+    let id = req.params.id;
+    const category = await Category.findByPk(id);
+    if (!category) {
+      return sendErrorResponse({
+        res, msg: message.Category_not_found
+      })
+
+    }
+    const deleteData = await Category.destroy({ where: { id } });
+
+
+    // Check if any row was deleted (deleteData will be the count of affected rows)
+    console.log('deleteData', deleteData)
+    if (deleteData === 0) {
+      return sendErrorResponse({ res, msg: message.Category_not_deleted })
+
+    }
+    // If deletion was successful, return a success response
+    return sendResponse({
+      res, msg: message.Category_Deleted
     })
-    .catch(err => {
-      res.status(500).send({
-        message: "Could not delete Category with id=" + id
-      });
-    });
-};
 
-// // Delete all Categories from the database.
-// exports.deleteAll = (req, res) => {
-//   Category.destroy({
-//     where: {},
-//     truncate: false
-//   })
-//     .then(nums => {
-//       res.send({ message: `${nums} Categories were deleted successfully!` });
-//     })
-//     .catch(err => {
-//       res.status(500).send({
-//         message:
-//           err.message || "Some error occurred while removing all categories."
-//       });
-//     });
-// };
+  } catch (err) {
+    return sendErrorResponse({ res, err })
 
-// // find all published Category
-// exports.findAllPublished = (req, res) => {
-//   Category.findAll({ where: { published: true } })
-//     .then(data => {
-//       res.send(data);
-//     })
-//     .catch(err => {
-//       res.status(500).send({
-//         message:
-//           err.message || "Some error occurred while retrieving categories."
-//       });
-//     });
-// };
+
+  }
+}
+

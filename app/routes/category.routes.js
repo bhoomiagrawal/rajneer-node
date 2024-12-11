@@ -8,13 +8,13 @@ const authorize = require('../middleware/authorization');
   router.post("/",  categories.create);
 
   // Retrieve all Categories
-  router.get("/", categories.findAll);
+  router.get("/", categories.getAll);
 
   // Retrieve all published Categories
   // router.get("/published", categories.findAllPublished);
 
   // Retrieve a single Category with id
-  router.get("/:id", categories.findOne);
+  router.get("/:id", categories.getSingle);
 
   // Update a Category with id
   router.put("/:id", categories.update);
