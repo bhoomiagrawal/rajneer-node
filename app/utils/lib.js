@@ -1,25 +1,29 @@
-exports.sendResponse = (response, dt, message="successfull", status=200, ) => {
-    let data = {
-        message,
+exports.sendResponse = ({res, data, msg="successfull", status=200,} ) => {
+    let dt = {
+        msg,
         status,
-        data: dt
+        data
 
     }
-    return response.status(status).json({
-       data
+    return res.status(status).json({
+       data: dt
     })
 
 }
 
-exports.sendErrorResponse = (response, err, status=500, message="Some error occurred",  ) => {
+exports.sendErrorResponse = ({res, err, status=500, msg="Some error occurred"}  ) => {
     let error = {
-        message,
+        msg,
         status,
         err,
 
     }
-    return response.status(status).json({
+    return res.status(status).json({
        error
     })
+
+}
+
+exports.create = () => {
 
 }

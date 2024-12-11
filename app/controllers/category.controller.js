@@ -1,44 +1,54 @@
 const db = require("../models");
 const { sendResponse, sendErrorResponse } = require("../utils/lib");
+const { categoryValidation } = require("../utils/validation");
 const Category = db.categories;
 const Op = db.Sequelize.Op;
 
+
+
+
+
+
+
+
 // Create and Save a new Category
-exports.create = (req, res) => {
-  // Validate request
-  if (!req.body.category_name) {
-    res.status(400).send({
-      message: "Content can not be empty!"
-    });
-    return;
-  }
+exports.create = (req, res) => [
 
-  // Create a Category
+  // Use the imported validation middleware
+  ...categoryValidation,
 
-  let { category_name, category_code, } = req.body
-  // Save Category in the database
-  Category.create({ category_name, category_code })
-    .then(data => {
-      sendResponse(res, data)
-    })
-    .catch(err => {
-      sendErrorResponse(res, err)
+  async (req, res) => {
 
-    });
-};
+    // Create a Category
+
+    try {
+      const { category_name, category_code } = req.body
+
+      // Check for validation errors
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return sendErrorResponse({res, err:errors.array(), status:401})
+      }
+
+      let data = await Subcategory.create({ category_name, category_code }, { new: true });
+      return sendResponse({res, data})
+    } catch (err) {
+      return sendErrorResponse({ res, err })
+    }
+  }]
 
 // Retrieve all Categories from the database.
 exports.findAll = (req, res) => {
   // console.log('req', req)
   const title = req.query.title;
   var condition = title ? { title: { [Op.like]: `%${title}%` } } : null;
-// console.log('Category', Category)
+  // console.log('Category', Category)
   Category.findAll({ where: condition })
     .then(data => {
-      sendResponse(res, data)
+      sendResponse({res, data})
     })
     .catch(err => {
-      sendErrorResponse(res, err)
+      sendErrorResponse({res, err})
 
     });
 };
@@ -50,16 +60,16 @@ exports.findOne = (req, res) => {
   Category.findByPk(id)
     .then(data => {
       if (data) {
-        sendResponse(res, data)
+        sendResponse({res, data})
 
       } else {
-        sendErrorResponse(res, "Error", `Cannot find Category with id=${id}.`, 404,)
+        sendErrorResponse({res,  msg: `Cannot find Category with id=${id}.`, status : 404})
 
 
       }
     })
     .catch(err => {
-      sendErrorResponse(res, err)
+      sendErrorResponse({res, err})
 
     });
 };
@@ -76,7 +86,7 @@ exports.update = (req, res) => {
         res.send({
           message: "Category was updated successfully."
         });
-        
+
       } else {
         res.send({
           message: `Cannot update Category with id=${id}. Maybe Category was not found or req.body is empty!`

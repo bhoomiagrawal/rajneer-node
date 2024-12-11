@@ -1,6 +1,12 @@
 const {body} = require('express-validator');
 
 
+exports.categoryValidation = [
+    body('category_name').notEmpty().withMessage('Category Name Is Required.'),
+    body('category_code').notEmpty().withMessage('Category Code Is Required.')
+];
+
+
 exports.subcategoryValidation = [
     body('category_id').notEmpty().withMessage('Category ID Is Required.'),
     body('subcategory_name').notEmpty().withMessage('Subcategory Is Required.')
