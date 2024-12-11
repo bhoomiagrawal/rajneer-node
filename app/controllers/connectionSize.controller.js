@@ -35,11 +35,7 @@ console.log('req.body', req.body)
             let data = await ConnectionSize.create(temp, { new: true });
 
             return sendResponse(res, data)
-            // return res.status(200).json({
-            //     status: true,
-            //     ConnectionSize: data,
-            //     message: message.connectionSize_Added
-            // });
+            
         } catch (error) {
            return sendErrorResponse(res,error,message.Server_Error,500)
             // return res.status(500).json({
@@ -59,7 +55,7 @@ exports.update = [
         //         console.log('Query ID',req.params.id)
     
         try {
-             // Check for validation errors
+            // Check for validation errors
             //  const errors = validationResult(req);
             //  if (!errors.isEmpty()) {
             //      // console.log('errors', errors[msg])

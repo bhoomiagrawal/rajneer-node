@@ -23,7 +23,7 @@ exports.create = [
             }
             // Check for category id exist or not
             const catData = await Category.findByPk(req.body.category_id);
-            console.log('req.body.category_id', req.body.category_id)
+            // console.log('req.body.category_id', req.body.category_id)
             if (!catData) {
                 return sendErrorResponse(res, "Category not found", 401)
             }
@@ -39,12 +39,7 @@ exports.create = [
             //     message: message.Subcategory_Added
             // })
         } catch (error) {
-            // console.log('error', error)
-            return res.status(500).json({
-                message: message.Server_Error,
-                status: false,
-                error: error
-            })
+            return sendErrorResponse(res,error,message.Server_Error,500)
         }
     }
 ]
@@ -64,7 +59,7 @@ exports.update = [
         try {
             const catData = await Category.findByPk(req.body.category_id);
             if (!catData) {
-                return res.status(404).json({ message: 'Category not found' });
+                return sendErrorResponse(res, "Category not found", 401)
             }
             const data = {
                 category_id: req?.body?.category_id,
