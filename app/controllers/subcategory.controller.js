@@ -23,7 +23,6 @@ exports.create = [
             }
             // Check for category id exist or not
             const catData = await Category.findByPk(req.body.category_id);
-            // console.log('req.body.category_id', req.body.category_id)
             if (!catData) {
                 return sendErrorResponse({res, msg:"Category not found",status:400})
             }
@@ -33,11 +32,6 @@ exports.create = [
             }
             let data = await Subcategory.create(temp, { new: true });
             return sendResponse({res, data})
-            // return res.status(200).json({
-            //     status: true,
-            //     subcategory: data,
-            //     message: message.Subcategory_Added
-            // })
         } catch (err) {
             return sendErrorResponse({res,err})
         }
@@ -57,27 +51,25 @@ exports.update = [
         // }
 
         try {
-            const catData = await Category.findByPk(req.body.category_id);
+            const id=req.params.id;
+            const catData = await Category.findByPk( req?.body?.category_id);
             if (!catData) {
-                return sendErrorResponse(res, "Category not found", 401)
+                return sendErrorResponse({res,msg: "Category not found", status:404})
             }
             const data = {
                 category_id: req?.body?.category_id,
                 subcategory_name: req?.body?.subcategory_name,
             }
-            const subcategory = await Subcategory.findByPk(req?.params?.id);
+            const subcategory = await Subcategory.findByPk(id);
             if (!subcategory) {
-                return res.status(404).json({
-                    message: message.Subcategory_not_found,
-                    status: false
-                });
+                return sendErrorResponse({res,msg:message.Subcategory_not_found,status:404})
             }
             // Update the subcategory with the new fields
             await subcategory.update(data);
 
             const updatedSubcategory = await Subcategory.findOne({
                 where: {
-                    id: req?.params?.id
+                    id
                 },
                 include: [
                     {
@@ -88,16 +80,9 @@ exports.update = [
                 ]
             }
             );
-            // console.log("subcategory after update", updatedSubcategory);
-            return sendResponse(res, updatedSubcategory)
-            // return res.status(200).json({
-            //     status: true,
-            //     subcategory: updatedSubcategory,
-            //     message: message.Subcategory_Updated,
-            // });
-        } catch (error) {
-            // console.log('error', error)
-            return sendErrorResponse(res,error,message.Server_Error,500)
+            return sendResponse({res,data: {subCategory: updatedSubcategory}})
+        } catch (err) {
+            return sendErrorResponse({res,err})
         }
     }
 ]
@@ -106,32 +91,23 @@ exports.delete = async (req, res) => {
     try {
         const subcategory = await Subcategory.findByPk(req?.params?.id);
         if (!subcategory) {
-            return res.status(404).json({
-                message: message.Subcategory_not_found,
-                status: false
-            });
+            return sendErrorResponse({
+                res,
+                msg:message.Subcategory_not_found,
+                status:404
+            })
         }
-        // const b4del= await Subcategory;
-        // console.log('b4del', b4del)
         const deleteData = await Subcategory.destroy({ where: { id: req?.params?.id } });
-
-        //         console.log('deleteData', deleteData)
-        //         const afterdel= await Subcategory;
-        // console.log('afterdel', afterdel)
         // Check if any row was deleted (deleteData will be the count of affected rows)
-        // console.log('deleteData', deleteData)
         if (deleteData === 0) {
-            console.log('first')
-            return res.status(400).json({
-                message: message.Subcategory_not_deleted,  // You can define this message in your constants
-                status: false
-            });
+            return sendErrorResponse({
+                res,
+                msg: message.Subcategory_not_deleted,
+                status:404
+            })
         }
         // If deletion was successful, return a success response
-        return res.status(200).json({
-            status: true,
-            message: message.Subcategory_Deleted
-        });
+        return sendResponse({res,data:{message:message.Subcategory_Deleted}});
     } catch (error) {
         return sendErrorResponse(res,error,message.Server_Error,500)
     }
@@ -152,21 +128,16 @@ exports.getSingle = async (req, res) => {
             ]
         }
         );
-        // console.log('first', subcategory)
         if (!subcategory) {
-            return res.status(404).json({
-                message: message.Subcategory_not_found,
-                status: false
-            });
+            return sendErrorResponse({
+                res, msg: message.Category_not_found,status:400
+              })
         }
-        res.status(200).json({
-            status: true,
-            message: message.Data_get_successfully,
-            data: subcategory
-        })
-    } catch (error) {
-        // console.log(error)
-        return sendErrorResponse(res,error,message.Server_Error,500)
+        return sendResponse({
+            res, data: {subcategory,message:message.Data_get_successfully}
+          })
+    } catch (err) {
+        return sendErrorResponse({res,err})
     }
 }
 
@@ -177,7 +148,7 @@ exports.getAll = async (req, res) => {
 
         // Fetch the subcategory list with pagination and search filter
         let subcategoryList = await Subcategory.findAndCountAll({
-            offset: offset,
+            offset,
             limit: perPage,
             where: whereCondition,  // Apply search filter if exists
             include: [
@@ -196,13 +167,6 @@ exports.getAll = async (req, res) => {
                 status:404
             })
         }
-
-        // // Return the paginated data along with the category information
-        // res.status(200).json({
-        //     status: true,
-        //     subCategory: subcategoryList,status:true,
-        //     message: message.Data_get_successfully,
-        // });
         // Return the modified response with status and message inside subCategory object
         return sendResponse({
             res, data:{
@@ -210,17 +174,8 @@ exports.getAll = async (req, res) => {
                 count: subcategoryList.count   // Include the total count
             }
         })
-        // res.status(200).json({
-        //     // subCategory: {
-        //     status: true,
-        //     message: message.Data_get_successfully,
-        //     subCategory: subcategoryList.rows,  // Rename rows to data
-        //     count: subcategoryList.count   // Include the total count
-        //     // }
-        // });
-
-    } catch (error) {
+    } catch (err) {
         // console.log('Error fetching subcategories: ', error);
-        return sendErrorResponse(res,error,message.Server_Error,500)
+        return sendErrorResponse({res,err})
     }
 };
