@@ -112,10 +112,6 @@ exports.getSingle = async (req, res) => {
 }
 
 
-
-
-
-
 // Update a Category by the id in the request
 exports.update = [
   // ...categoryValidation,

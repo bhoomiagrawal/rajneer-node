@@ -40,17 +40,13 @@ exports.create = [
 
 exports.update = [
     // ...subcategoryValidation,
-    async (req, res) => {
-        // Check for validation errors
-        // const errors = validationResult(req);
-        // if (!errors.isEmpty()) {
-        //     return res.status(400).json({
-        //         status: false,
-        //         errors: errors.array()
-        //     });
-        // }
-
+    async (req, res) => {      
         try {
+            // Check for validation errors
+            // const errors = validationResult(req);
+            // if (!errors.isEmpty()) {
+            // return sendErrorResponse({res, err:errors.array(), status:401})
+            // }
             const id=req.params.id;
             const catData = await Category.findByPk( req?.body?.category_id);
             if (!catData) {
@@ -108,8 +104,8 @@ exports.delete = async (req, res) => {
         }
         // If deletion was successful, return a success response
         return sendResponse({res,data:{message:message.Subcategory_Deleted}});
-    } catch (error) {
-        return sendErrorResponse(res,error,message.Server_Error,500)
+    } catch (err) {
+        return sendErrorResponse(res,err,message.Server_Error,500)
     }
 }
 
@@ -145,7 +141,6 @@ exports.getAll = async (req, res) => {
     try {
         // Use the helper to extract pagination and search information
         const { offset, perPage, whereCondition } = getPaginationAndSearch(req, 'subcategory_name');  // Pass the field for search
-
         // Fetch the subcategory list with pagination and search filter
         let subcategoryList = await Subcategory.findAndCountAll({
             offset,
@@ -175,7 +170,6 @@ exports.getAll = async (req, res) => {
             }
         })
     } catch (err) {
-        // console.log('Error fetching subcategories: ', error);
         return sendErrorResponse({res,err})
     }
 };

@@ -12,86 +12,50 @@ const ConnectionSize = db.connectionSize;
 
 
 exports.create = [
+    // Use the imported validation middleware
    ...connectionSizeValidation,
     async (req, res) => {
         try {
             // Check for validation errors
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
-                // console.log('errors', errors[msg])
-                return sendErrorResponse(res, errors.msg, 401)
-                // return res.status(400).json({
-                //     status: false,
-                //     // errors: errors.msg
-                //     errors: errors.array()
-                // });
+                return sendErrorResponse({res, err:errors.array(), status:401})            
             }
-console.log('req.body', req.body)
             // Proceed with the creation logic if validation passes
             const temp = {
                 size: req.body.size,
             };
-
             let data = await ConnectionSize.create(temp, { new: true });
-
-            return sendResponse(res, data)
-            
-        } catch (error) {
-           return sendErrorResponse(res,error,message.Server_Error,500)
-            // return res.status(500).json({
-            //     message: message.Server_Error,
-            //     status: false,
-            //     error: error
-            // });
+            return sendResponse({res, data})          
+        } catch (err) {
+           return sendErrorResponse({res,err})
         }
     }
 ];
 
 exports.update = [
-    ...connectionSizeValidation,
-    async (req, res) => {
-        //         console.log('body name', req.body.name)
-        //         console.log('PARAMS',req)
-        //         console.log('Query ID',req.params.id)
-    
+    // ...connectionSizeValidation,
+    async (req, res) => {   
         try {
             // Check for validation errors
             //  const errors = validationResult(req);
             //  if (!errors.isEmpty()) {
-            //      // console.log('errors', errors[msg])
-            //      return res.status(400).json({
-            //          status: false,
-            //          // errors: errors.msg
-            //          errors: errors.array()
-            //      });
+            //      return sendErrorResponse({res, err:errors.array(), status:401})
             //  }
+            const id = req.params.id;
             const data = {
                 size: req?.body?.size,
             };
-            // console.log(req?.params?.id,'data', data)
-            const connectionSize = await ConnectionSize.findByPk(req?.params?.id);
-            // console.log('first', connectionSize)
+            const connectionSize = await ConnectionSize.findByPk(id);
             if (!connectionSize) {
-                return res.status(404).json({
-                    message: message.connectionSize_not_found,
-                    status: false
-                });
+                return sendErrorResponse({res,msg:message.connectionSize_not_found,status:404})
             }
             // Update the connectionSize with the new fields
             await connectionSize.update(data);
-            const updatedConnectionSize = await ConnectionSize.findByPk(req?.params?.id);
-            // console.log("connectionSize after update", updatedConnectionSize);
-            return res.status(200).json({
-                status: true,
-                connectionSize: updatedConnectionSize,
-                message: message.connectionSize_Updated,
-            });
-        } catch (error) {
-            return res.status(500).json({
-                message: message.Server_Error,
-                status: false,
-                error: error
-            });
+            const updatedConnectionSize = await ConnectionSize.findByPk(id);           
+            return sendResponse({res,data: {connectionSize: updatedConnectionSize,message:message.connectionSize_Updated}})
+        } catch (err) {
+            return sendErrorResponse({res,err})
         }
     }
 ]
@@ -100,78 +64,66 @@ exports.delete = async (req, res) => {
     try{
         const connectionSize = await ConnectionSize.findByPk(req?.params?.id);
         if (!connectionSize) {
-            return res.status(404).json({
-                message: message.connectionSize_not_found,
-                status: false
-            });
+            return sendErrorResponse({
+                res,
+                msg:message.connectionSize_not_found,
+                status:404
+            })
         }
         const deleteData = await ConnectionSize.destroy({ where: {id: req?.params?.id} });
-        return res.status(200).json({
-            status: true,
-            message: message. connectionSize_Deleted
-        });
-    } catch (error) {
-        return res.status(500).json({
-            message: message.Server_Error,
-            status: false,
-            error: error
-        })
+         // Check if any row was deleted (deleteData will be the count of affected rows)
+         if (deleteData === 0) {
+            return sendErrorResponse({ res, msg: message.connectionSize_not_deleted })
+        }
+        // If deletion was successful, return a success response
+        return sendResponse({res,data:{message:message.connectionSize_Deleted}});
+    } catch (err) {
+        return sendErrorResponse({res,err});
     }
 }
 
 exports.getSingle = async (req, res) => {
     try {
-        const connectionSize = await ConnectionSize.findByPk(req?.params?.id);
-        // console.log('first', ConnectionSize)
+        const id= req.params.id;
+        const connectionSize = await ConnectionSize.findByPk(id);
         if (!connectionSize) {
-            return res.status(404).json({
-                message: message.connectionSize_not_found,
-                status: false
-            });
+            return sendErrorResponse({
+                res, msg: message.connectionSize_not_found,status:400
+              })
         }
-        res.status(200).json({
-            status: true,
-            message: message.Data_get_successfully,
-            data: connectionSize
-        })
-    } catch (error) {
-        return res.status(500).json({
-            status: false,
-            message: message.Server_Error
-        })
+        return sendResponse({
+            res, data: {connectionSize,message:message.Data_get_successfully}
+          })
+    } catch (err) {
+        return sendErrorResponse({res,err})
     }
 }
 
 exports.getAll = async (req, res) => {
     try {
         // Use the helper to extract pagination and search information for the specific field ('Connection_Size')
-        const { offset, perPage, whereCondition } = getPaginationAndSearch(req, 'Connection_Size');  // Pass the field for search
-
+        const { offset, perPage, whereCondition } = getPaginationAndSearch(req, 'size');  // Pass the field for search
         // Fetch the connection size list with pagination and search filter
         let connectionSizeList = await ConnectionSize.findAndCountAll({
-            offset: offset,
+            offset,
             limit: perPage,
             where: whereCondition,  // Apply search filter if exists
         });
-const data = await ConnectionSize.findAll({});
-console.log('data', data)
         if (!connectionSizeList) {
-            return res.status(404).json({
-                status: false,
-                message: message.Record_not_found,
-            });
+            return sendErrorResponse({
+                res,
+                msg:message.Record_not_found,
+                status:404
+            })
         }
-
-        res.status(200).json({
-            status: true,
-            message: message.Data_get_successfully,
-            ConnectionSize: connectionSizeList.rows,
-            count: connectionSizeList.count,
-        });
-    } catch (error) {
-        res.status(400).json({
-            status: false,
-            error: error.message || message.Server_Error,
-        });
+ // Return the modified response with status and message inside subCategory object
+ return sendResponse({
+    res, data:{
+        connectionSize: connectionSizeList.rows,  // Rename rows to data
+        count: connectionSizeList.count  // Include the total count
+    }
+})        
+    } catch (err) {
+       return sendErrorResponse({res,err})
     }
 };

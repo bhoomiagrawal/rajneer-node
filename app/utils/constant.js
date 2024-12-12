@@ -75,20 +75,23 @@ const constant = {
     Subcategory_not_found: "Subcategory not found",
     Subcategory_not_deleted: "Subcategory not deleted",
 
-    connectionSize_Added: " connectionSize added successfully",
-    connectionSize_Updated: " connectionSize updated successfully",
-    connectionSize_Deleted: " connectionSize deleted successfully",
-    connectionSize_not_found: "connectionSize not found",
+    connectionSize_Added: " Connection Size added successfully",
+    connectionSize_Updated: " Connection Size updated successfully",
+    connectionSize_Deleted: " Connection Size deleted successfully",
+    connectionSize_not_found: "Connection Size not found",
+    connectionSize_not_deleted: "Connection Size not deleted",
 
-    meterServiceCharge_Added: " meterServiceCharge added successfully",
-    meterServiceCharge_Updated: " meterServiceCharge updated successfully",
-    meterServiceCharge_Deleted: " meterServiceCharge deleted successfully",
-    meterServiceCharge_not_found: "meterServiceCharge not found",
+    meterServiceCharge_Added: " meter Service Charge added successfully",
+    meterServiceCharge_Updated: " meter Service Charge updated successfully",
+    meterServiceCharge_Deleted: " meter Service Charge deleted successfully",
+    meterServiceCharge_not_found: "meter Service Charge not found",
+    meterServiceCharge_not_deleted:"meter Service Charge not deleted",
 
     meterStatusCode_Added: " meter Status Code added successfully",
     meterStatusCode_Updated: " meter Status Code updated successfully",
     meterStatusCode_Deleted: " meter Statu sCode deleted successfully",
     meterStatusCode_not_found: "meter Status Code not found",
+    meterStatusCode_not_deleted: "meter Status Code not deleted",
 
 
     Attribute_Added: "Attribute added successfully",
