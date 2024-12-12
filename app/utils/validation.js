@@ -26,3 +26,10 @@ exports.meterStatusValidation = [
     body('description').notEmpty().withMessage('Meter Status Description Is Required.'),
     body('status').notEmpty().withMessage('Status Is Required.')
 ];
+
+exports.slabValidation = [
+    body('max_consumption').notEmpty().withMessage('Max consumption Is Required.'),
+    body('min_consumption').notEmpty().withMessage('Min consumption Is Required.'),
+    body('category_id').notEmpty().withMessage('Category Is Required.'),
+    
+];

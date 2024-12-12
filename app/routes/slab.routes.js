@@ -8,11 +8,11 @@ const authorize = require('../middleware/authorization');
 router.post("/", slabs.create);
 
 // Retrieve all Slabs
-router.get("/", slabs.findAll);
+router.get("/", slabs.getAll);
 
 
 // Retrieve a single Slab with id
-router.get("/:id", slabs.findOne);
+router.get("/:id", slabs.getSingle);
 
 // Update a Slab with id
 router.put("/:id", slabs.update);

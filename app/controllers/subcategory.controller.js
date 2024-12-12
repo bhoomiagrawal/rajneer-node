@@ -134,7 +134,7 @@ exports.getSingle = async (req, res) => {
               })
         }
         return sendResponse({
-            res, data: {subcategory,message:message.Data_get_successfully}
+            res, data: {subcategory}
           })
     } catch (err) {
         return sendErrorResponse({res,err})
