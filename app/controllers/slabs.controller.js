@@ -69,8 +69,8 @@ exports.getAll = async (req, res) => {
       // Return the modified response with status and message inside subCategory object
       return sendResponse({
           res, data:{
-              subCategory: subcategoryList.rows,  // Rename rows to data
-              count: subcategoryList.count   // Include the total count
+              slab: slabList.rows,  // Rename rows to data
+              count: slabList.count   // Include the total count
           }
       })
   } catch (err) {
