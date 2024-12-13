@@ -155,13 +155,17 @@ exports.getAll = async (req, res) => {
         });
 
         // Check if data was found
-        if (!subcategoryList.rows.length) {
-            return sendErrorResponse({
-                res,
-                msg:message.Record_not_found,
-                status:404
-            })
-        }
+        // if (!subcategoryList.rows.length) {
+        //     return sendResponse({
+        //         data:{
+        //             message:message.Record_not_found,
+        //             subCategory: subcategoryList.rows
+        //         }
+        //         res,
+               
+        //         status:404
+        //     })
+        // }
         // Return the modified response with status and message inside subCategory object
         return sendResponse({
             res, data:{

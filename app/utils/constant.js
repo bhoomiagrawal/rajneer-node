@@ -91,7 +91,13 @@ const constant = {
     meterStatusCode_Updated: " meter Status Code updated successfully",
     meterStatusCode_Deleted: " meter Statu sCode deleted successfully",
     meterStatusCode_not_found: "meter Status Code not found",
-    meterStatusCode_not_deleted: "meter Status Code not deleted",
+    meterStatusCode_not_deleted: "meter Status Code not deleted", 
+
+    connectionType_Added: " Connection Type added successfully",
+    connectionType_Updated: " Connection Type updated successfully",
+    connectionType_Deleted: " Connection Type deleted successfully",
+    connectionType_not_found: "Connection Type not found",
+    connectionType_not_deleted: "Connection Type not deleted",
 
 
     Attribute_Added: "Attribute added successfully",

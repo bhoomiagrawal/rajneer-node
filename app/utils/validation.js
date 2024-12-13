@@ -22,7 +22,12 @@ exports.meterServiceChargeValidation = [
 ];
 exports.meterStatusValidation = [
     body('meter_status').notEmpty().withMessage('Meter Status Is Required.'),
-    body('rule').notEmpty().withMessage('Meter Status Rule Is Required.'),
+    // body('rule').notEmpty().withMessage('Meter Status Rule Is Required.'),
     body('description').notEmpty().withMessage('Meter Status Description Is Required.'),
+    body('status').notEmpty().withMessage('Status Is Required.')
+];
+exports.connectionTypeValidation = [
+    body('conn_type').notEmpty().withMessage('Connection Type Is Required.'),
+    body('description').notEmpty().withMessage('Description Is Required.'),
     body('status').notEmpty().withMessage('Status Is Required.')
 ];

@@ -8,8 +8,8 @@ const authorize = require('../middleware/authorization');
 
 router.get("/", SubcategoryController.getAll);
 router.post("/", SubcategoryController.create);
-router.put("/edit/:id", SubcategoryController.update);
-router.delete("/delete/:id", SubcategoryController.delete);
-router.get("/get/:id", SubcategoryController.getSingle);
+router.put("/:id", SubcategoryController.update);
+router.delete("/:id", SubcategoryController.delete);
+router.get("/:id", SubcategoryController.getSingle);
 
 module.exports = router

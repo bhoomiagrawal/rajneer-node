@@ -8,9 +8,9 @@ module.exports = (sequelize, Sequelize) => {
       meter_status: {
         type: Sequelize.STRING
       },
-      rule: {
-        type: Sequelize.STRING
-      },
+      // rule: {
+      //   type: Sequelize.STRING
+      // },
       description: {
         type: Sequelize.STRING
       },
@@ -18,7 +18,7 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.INTEGER
       },
     }, {
-      tableName: 'meterStatus', // table name in the database
+      tableName: 'meter_status', // table name in the database
       timestamps: true,           // automatically adds createdAt, updatedAt fields
       paranoid: true              // adds deletedAt for soft deletes
     });
