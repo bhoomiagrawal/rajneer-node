@@ -25,7 +25,7 @@ exports.create = [
             }
             const temp = {
                 connectionSize_id: req?.body?.connectionSize_id,
-                meter_service: req?.body?.meter_service,
+                meter_service_charge: req?.body?.meter_service_charge,
                 status: req?.body?.status,
             }
             let data = await MeterServiceCharge.create(temp, { new: true });
@@ -53,7 +53,7 @@ exports.update = [
             }
             const data = {
                 connectionSize_id: req?.body?.connectionSize_id,
-                meter_service: req?.body?.meter_service,
+                meter_service_charge: req?.body?.meter_service_charge,
                 status: req?.body?.status,
             };
             const serviceCharge = await MeterServiceCharge.findByPk(id);

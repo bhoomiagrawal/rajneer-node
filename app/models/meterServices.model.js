@@ -15,7 +15,7 @@ module.exports = (sequelize, Sequelize) => {
         },
         allowNull: false,
       },
-      meter_service: {
+      meter_service_charge: {
         type: Sequelize.STRING,
       },
       status: {
@@ -23,7 +23,7 @@ module.exports = (sequelize, Sequelize) => {
       },
     },
     {
-      tableName: "meter_service",
+      tableName: "meter_service_charges",
       timestamps: true,
       paranoid: true,
     }
