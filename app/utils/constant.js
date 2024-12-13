@@ -103,7 +103,15 @@ const constant = {
     Attribute_Added: "Attribute added successfully",
     Attribute_Updated: "Attribute updated successfully",
     Attribute_Deleted: "Attribute deleted successfully",
-    Post_Featued_Updated: "Post Featured Updated"
+    Post_Featued_Updated: "Post Featured Updated",
+
+
+    Slab_not_found: "Slab not found",
+    Slab_Added: " Slab added successfully",
+    Slab_Updated: " Slab updated successfully",
+    Slab_Deleted: " Slab deleted successfully",
+    Slab_not_found: "Slab not found",
+    Slab_not_deleted: "Slab not deleted",
 
 }
 module.exports = constant;
