@@ -7,8 +7,11 @@ module.exports = (sequelize, Sequelize) => {
         primaryKey: true,
         autoIncrement: true,
       },
+      
       charge_type: {
         type: Sequelize.STRING,
+      type: DataTypes.ENUM("fixed_charges", "meter_service_charges", "water_charges", "minimum_charges", "idc", ),
+
       },
       connection_size_id: {
         type: Sequelize.INTEGER,
@@ -16,8 +19,9 @@ module.exports = (sequelize, Sequelize) => {
           model: 'connection_size',
           key: 'id',
         },
-        allowNull: false,
+        allowNull: true,
       },
+
       category_id: {
         type: Sequelize.INTEGER,
         references: {
@@ -32,12 +36,14 @@ module.exports = (sequelize, Sequelize) => {
           model: 'slabs',
           key: 'id',
         },
-        allowNull: false,
+        allowNull: true,
       },
+      
       ratePerThousand: {
-        type: Sequelize.STRING,
+        type: Sequelize.FLOAT,
         allowNull: false,
       },
+      
       created_by: {
         type: Sequelize.STRING,
         references: {
@@ -45,7 +51,9 @@ module.exports = (sequelize, Sequelize) => {
           key: 'sso_id',
         },
         allowNull: false,
-      }
+      },
+
+     
     },
     {
       tableName: 'taiff-configuration',
@@ -55,6 +63,9 @@ module.exports = (sequelize, Sequelize) => {
   );
 
   TariffConfiguration.associate = (models) => {
+    TariffConfiguration.belongsTo(models.slabs, { foreignKey: "slab_id", as: "slab" });
+    TariffConfiguration.belongsTo(models.categories, { foreignKey: "category_id", as: "category" });
+    TariffConfiguration.belongsTo(models.connectionSize, { foreignKey: "connection_size_id", as: "connectionSize" });
     TariffConfiguration.belongsTo(models.users, {
       foreignKey: 'created_by',
       as: 'user_sso',
@@ -62,4 +73,9 @@ module.exports = (sequelize, Sequelize) => {
   };
 
   return TariffConfiguration;
+
+
+
+
+
 };

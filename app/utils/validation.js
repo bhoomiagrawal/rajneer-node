@@ -84,3 +84,26 @@ exports.baEnrollValidation = [
     // body('bill_agency_created_by').notEmpty().withMessage('Category Is Required.'),
     // body('bill_agency_updated_by').notEmpty().withMessage('Category Is Required.'),  
 ];
+
+
+exports.tariffValidation = [
+  body("charge_type")
+    .exists().withMessage("Charge type is required.")
+    .isIn(["water_charge", "meter_service", "fixed_charge", "minimum_charge"])
+    .withMessage("Invalid charge type."),
+  body("connection_size_id")
+    .if(body("charge_type").not().equals("fixed_charge"))
+    .exists().withMessage("Connection size ID is required.")
+    .isInt().withMessage("Connection size ID must be an integer."),
+  body("slab_id")
+    .if(body("charge_type").isIn(["water_charge", "minimum_charge"]))
+    .exists().withMessage("Slab ID is required for the selected charge type.")
+    .isInt().withMessage("Slab ID must be an integer."),
+  body("ratePerThousand")
+    .exists().withMessage("Rate is required.")
+    .isFloat({ min: 0 }).withMessage("Rate must be a positive number."),
+  body("sso_id")
+    .exists().withMessage("SSO ID is required.")
+    .isInt().withMessage("SSO ID must be an integer."),
+];
+
