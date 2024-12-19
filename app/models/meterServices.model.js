@@ -7,7 +7,7 @@ module.exports = (sequelize, Sequelize) => {
         primaryKey: true,
         autoIncrement: true,
       },
-      connectionSize_id: {
+      connection_size_id: {
         type: Sequelize.INTEGER,
         references: {
           model: "connection_size", // Correct table name
@@ -32,7 +32,7 @@ module.exports = (sequelize, Sequelize) => {
   MeterServices.associate = (models) => {
     // A meter service belongs to one connection size
     MeterServices.belongsTo(models.connectionSize, {
-      foreignKey: "connectionSize_id",
+      foreignKey: "connection_size_id",
       as: "connectionSize",
     });
   };

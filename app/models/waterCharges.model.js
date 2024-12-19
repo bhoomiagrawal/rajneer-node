@@ -8,7 +8,7 @@ module.exports = (sequelize, DataTypes) => {
       tariff_id: {
         type: DataTypes.INTEGER,
         references: {
-          model: "tariffConfiguration", // Name of the table
+          model: "tariff_configuration", // Name of the table
           key: "id",
         },
         allowNull: false,

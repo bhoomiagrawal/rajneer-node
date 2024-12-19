@@ -1,25 +1,32 @@
 module.exports = (sequelize, Sequelize) => {
-    const ConnectionSize = sequelize.define("connectionSize", {
-      id: {
-        type: Sequelize.INTEGER,
-        primaryKey: true,
-        autoIncrement: true
+  const ConnectionSize = sequelize.define(
+      'connectionSize', // Model name
+      {
+          id: {
+              type: Sequelize.INTEGER,
+              primaryKey: true,
+              autoIncrement: true,
+          },
+          size: {
+              type: Sequelize.STRING,
+              allowNull: false,
+          },
       },
-      size: {
-        type: Sequelize.STRING
-      },      
-    }, {
-      tableName: 'connection_size', // table name in the database
-      timestamps: true,           // automatically adds createdAt, updatedAt fields
-      paranoid: true              // adds deletedAt for soft deletes
-    });
-    
-    ConnectionSize.associate = (models) => {
-      ConnectionSize.hasMany(models.meterServices, {
-        foreignKey: "connectionSize_id",
-        as: "meterServices",
+      {
+          tableName: 'connection_size', // Table name in the database
+          timestamps: true,            // Automatically add createdAt and updatedAt
+          paranoid: true,              // Add deletedAt for soft deletes
+      }
+  );
+
+  ConnectionSize.associate = (models) => {
+      // Relationships
+      ConnectionSize.hasMany(models.fixedCharges, {
+          foreignKey: 'connection_size_id', // Foreign key in the FixedCharges model
+          as: 'fixedCharges',             // Alias for the relationship
+          onDelete: 'CASCADE',            // Cascade on delete
       });
-    };
-    
-    return ConnectionSize;
   };
+
+  return ConnectionSize;
+};

@@ -1,21 +1,35 @@
 module.exports = (sequelize, Sequelize) => {
-    const ChargeType = sequelize.define("chargeType", {
-      id: {
-        type: Sequelize.INTEGER,
-        primaryKey: true,
-        autoIncrement: true
+  const ChargeType = sequelize.define(
+      "chargeType", // Model name
+      {
+          id: {
+              type: Sequelize.INTEGER,
+              primaryKey: true,
+              autoIncrement: true,
+          },
+          charge_name: {
+              type: Sequelize.STRING,
+              allowNull: false,
+          },
+          status: {
+              type: Sequelize.INTEGER,
+              allowNull: false,
+          },
       },
-      charge_name: {
-        type: Sequelize.STRING
-      },  
-      status: {
-        type: Sequelize.INTEGER
-      },   
-    }, {
-      tableName: 'charge_type', // table name in the database
-      timestamps: true,           // automatically adds createdAt, updatedAt fields
-      paranoid: true              // adds deletedAt for soft deletes
-    });
-    
-    return ChargeType;
+      {
+          tableName: 'charge_type', // Ensure the table name is correct
+          timestamps: true,
+          paranoid: true,
+      }
+  );
+
+  ChargeType.associate = (models) => {
+      // Relationship with tariffConfiguration
+      ChargeType.hasMany(models.tariffConfiguration, {
+          foreignKey: 'charge_type_id', // Foreign key in tariffConfiguration
+          as: 'tariffConfigurations',  // Alias for the relationship
+      });
   };
+
+  return ChargeType;
+};
