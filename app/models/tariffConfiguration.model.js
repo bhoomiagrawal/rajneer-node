@@ -8,9 +8,12 @@ module.exports = (sequelize, Sequelize) => {
         autoIncrement: true,
       },
       
-      charge_type: {
-        type: Sequelize.STRING,
-      type: DataTypes.ENUM("fixed_charges", "meter_service_charges", "water_charges", "minimum_charges", "idc", ),
+      charge_type_id: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'chargeType',
+          key: 'id',
+        },
 
       },
       connection_size_id: {
@@ -64,6 +67,7 @@ module.exports = (sequelize, Sequelize) => {
 
   TariffConfiguration.associate = (models) => {
     TariffConfiguration.belongsTo(models.slabs, { foreignKey: "slab_id", as: "slab" });
+    TariffConfiguration.belongsTo(models.chargeType, { foreignKey: "charge_type_id", as: "chargeType" });
     TariffConfiguration.belongsTo(models.categories, { foreignKey: "category_id", as: "category" });
     TariffConfiguration.belongsTo(models.connectionSize, { foreignKey: "connection_size_id", as: "connectionSize" });
     TariffConfiguration.belongsTo(models.users, {

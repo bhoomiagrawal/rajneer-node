@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
       connection_size_id: {
         type: DataTypes.INTEGER,
         references: {
-          model: 'connection_size', // Ensure the connection_size table exists
+          model: 'ConnectionSize',
           key: 'id',
         },
         allowNull: false,
@@ -38,16 +38,16 @@ module.exports = (sequelize, DataTypes) => {
   // Associations
   FixedCharges.associate = (models) => {
     // Associate with ConnectionSize
-    FixedCharges.belongsTo(models.ConnectionSize, {
-      foreignKey: 'connection_size_id',
-      as: 'connectionSize',
-    });
+    // FixedCharges.belongsTo(models.ConnectionSize, {
+    //   foreignKey: 'connection_size_id',
+    //   as: 'connectionSize',
+    // });
 
     // Associate with Category
-    FixedCharges.belongsTo(models.Categories, {
-      foreignKey: 'category_id',
-      as: 'category',
-    });
+    // FixedCharges.belongsTo(models.Categories, {
+    //   foreignKey: 'category_id',
+    //   as: 'category',
+    // });
   };
 
   return FixedCharges;

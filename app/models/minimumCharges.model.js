@@ -38,13 +38,13 @@ module.exports = (sequelize, DataTypes) => {
   // Associations
   MinimumCharges.associate = (models) => {
     // Associate with Category
-    MinimumCharges.belongsTo(models.Categories, {
+    MinimumCharges.belongsTo(models.categories, {
       foreignKey: 'category_id',
       as: 'category',
     });
 
     // Associate with ConnectionSize
-    MinimumCharges.belongsTo(models.ConnectionSize, {
+    MinimumCharges.belongsTo(models.connectionSize, {
       foreignKey: 'connection_size_id',
       as: 'connectionSize',
     });
