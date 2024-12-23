@@ -9,25 +9,25 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.STRING,
             allowNull: false,
             unique: true,
-            validate: {
-                is: /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/ // PAN validation pattern
-            }
+            // validate: {
+            //     is: /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/ // PAN validation pattern
+            // }
         },
         tan_number: {
             type: Sequelize.STRING,
             allowNull: false,
             unique: true,
-            validate: {
-                is: /^[A-Z]{4}[0-9]{5}[A-Z]{1}$/ // TAN validation pattern
-            }
+            // validate: {
+            //     is: /^[A-Z]{4}[0-9]{5}[A-Z]{1}$/ // TAN validation pattern
+            // }
         },
         gst_number: {
             type: Sequelize.STRING,
             allowNull: false,
             unique: true,
-            validate: {
-                is: /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[A-Z0-9]{1}[A-Z0-9]{1}[0-9]{1}$/ // GST validation pattern
-            }
+            // validate: {
+            //     is: /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[A-Z0-9]{1}[A-Z0-9]{1}[0-9]{1}$/ // GST validation pattern
+            // }
         },
         cin_number: {
             type: Sequelize.STRING,
@@ -59,9 +59,9 @@ module.exports = (sequelize, Sequelize) => {
         },
         contact_number: {
             type: Sequelize.STRING,
-            validate: {
-                is: /^[0-9]{10}$/ // Contact number validation
-            }
+            // validate: {
+            //     is: /^[0-9]{10}$/ // Contact number validation
+            // }
         },
         registered_office_address: {
             type: Sequelize.STRING
@@ -155,130 +155,3 @@ module.exports = (sequelize, Sequelize) => {
     return BillingAgency;
 };
 
-// module.exports = (sequelize, Sequelize) => {
-//     const ChargeType = sequelize.define("chargeType", {
-//         id: {
-//             type: Sequelize.INTEGER,
-//             primaryKey: true,
-//             autoIncrement: true
-//         },
-//         bill_agency_pan_no: {
-//             type: Sequelize.STRING
-//         },
-//         bill_agency_tan_no: {
-//             type: Sequelize.STRING
-//         },
-//         bill_agency_gst_no: {
-//             type: Sequelize.STRING
-//         },
-//         bill_agency_cin_no: {
-//             type: Sequelize.INTEGER
-//         },
-//         bill_agency_comp_name: {
-//             type: Sequelize.STRING
-//         },
-//         bill_agency_dir_name: {
-//             type: Sequelize.STRING
-//         },
-//         bill_agency_auth_signatory: {
-//             type: Sequelize.STRING
-//         },
-//         bill_agency_estd: {
-//             type: Sequelize.DATE
-//         },
-//         bill_agency_nature_of_company: {
-//             type: Sequelize.STRING
-//         },
-//         //add data type int or float 
-//         bill_agency_turnover: {
-//             type: Sequelize.STRING
-//         },
-//         bill_agency_contact_person_name: {
-//             type: Sequelize.STRING
-//         },
-//         bill_agency_person_contact_no: {
-//             type: Sequelize.STRING
-//         },
-//         bill_agency_reg_office_address: {
-//             type: Sequelize.STRING
-//         },
-//         bill_agency_landmark: {
-//             type: Sequelize.STRING
-//         },
-//         bill_agency_area: {
-//             type: Sequelize.STRING
-//         },
-//         bill_agency_state: {
-//             type: Sequelize.STRING
-//         },
-//         bill_agency_district: {
-//             type: Sequelize.STRING
-//         },
-//         bill_agency_pincode: {
-//             type: Sequelize.STRING
-//         },
-//         bill_agency_landline: {
-//             type: Sequelize.STRING
-//         },
-//         bill_agency_company_website: {
-//             type: Sequelize.STRING
-//         },
-//         bill_agency_email: {
-//             type: Sequelize.STRING
-//         },
-//         bill_agency_corp_office_address: {
-//             type: Sequelize.STRING
-//         },
-//         bill_agency_corp_landmark: {
-//             type: Sequelize.STRING
-//         },
-//         bill_agency_corp_area: {
-//             type: Sequelize.STRING
-//         },
-//         bill_agency_corp_state: {
-//             type: Sequelize.STRING
-//         },
-//         bill_agency_corp_district: {
-//             type: Sequelize.STRING
-//         },
-//         bill_agency_corp_pincode: {
-//             type: Sequelize.STRING
-//         },
-//         bill_agency_corp_landline: {
-//             type: Sequelize.STRING
-//         },
-//         bill_agency_corp_company_website: {
-//             type: Sequelize.STRING
-//         },
-//         bill_agency_corp_email: {
-//             type: Sequelize.STRING
-//         },
-//         bill_agency_nib_no: {
-//             type: Sequelize.STRING
-//         },
-//         bill_agency_loi_no: {
-//             type: Sequelize.STRING
-//         },
-//         bill_agency_work_order_no: {
-//             type: Sequelize.STRING
-//         },
-//         bill_agency_work_order_eff_date: {
-//             type: Sequelize.STRING
-//         },
-//         bill_agency_work_order_exp_date: {
-//             type: Sequelize.STRING
-//         },
-//         bill_agency_work_order_cost: {
-//             type: Sequelize.STRING
-//         },
-//         status: {
-//             type: Sequelize.INTEGER
-//         },
-//     }, {
-//         tableName: 'charge_type', // table name in the database
-//         timestamps: true,           // automatically adds createdAt, updatedAt fields
-//         paranoid: true              // adds deletedAt for soft deletes
-//     });
-
-//     return ChargeType;
-// };

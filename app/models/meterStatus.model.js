@@ -1,5 +1,5 @@
 module.exports = (sequelize, Sequelize) => {
-    const meter_status_rules = sequelize.define("meterStatus", {
+    const MeterStatus = sequelize.define("meterStatus", {
       id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
@@ -23,6 +23,6 @@ module.exports = (sequelize, Sequelize) => {
       paranoid: true              // adds deletedAt for soft deletes
     });
   
-    return meter_status_rules;
+    return MeterStatus;
   };
   
