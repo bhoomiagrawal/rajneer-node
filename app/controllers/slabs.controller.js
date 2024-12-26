@@ -82,7 +82,7 @@ exports.getAll = async (req, res) => {
 exports.getSingle = async (req, res) => {
   try {
     const { id } = req.params
-    const slab = await Subcategory.findOne({
+    const slab = await Slab.findOne({
       where: {
         id
       },
