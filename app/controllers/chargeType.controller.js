@@ -104,7 +104,7 @@ exports.getSingle = async (req, res) => {
 exports.getAll = async (req, res) => {
     try {
         // Use the helper to extract pagination and search information for the specific field ('Connection_Size')
-        const { offset, perPage, whereCondition } = getPaginationAndSearch(req, 'conn_type');  // Pass the field for search
+        const { offset, perPage, whereCondition } = getPaginationAndSearch(req, 'charge_name');  // Pass the field for search
         // Fetch the connection size list with pagination and search filter
         let ChargeTypeList = await ChargeType.findAndCountAll({
             offset,
