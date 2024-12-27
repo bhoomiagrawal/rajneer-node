@@ -22,8 +22,10 @@ module.exports = (sequelize, Sequelize) => {
     },
     */
     status: {
-      type: Sequelize.INTEGER
-    },
+      type: Sequelize.INTEGER, // Active (1) / Inactive (0)
+      allowNull: false,
+      defaultValue: 1
+  },
   }, {
     tableName: 'connection_type', // table name in the database
     timestamps: true,           // automatically adds createdAt, updatedAt fields

@@ -146,6 +146,7 @@ module.exports = (sequelize, Sequelize) => {
             allowNull: false,
             defaultValue: 1
         },
+        
     }, {
         tableName: 'billing_agencies', // table name in the database
         timestamps: true,              // automatically adds createdAt, updatedAt fields

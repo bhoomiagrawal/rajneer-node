@@ -19,8 +19,10 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.STRING,
       },
       status: {
-        type: Sequelize.INTEGER,
-      },
+        type: Sequelize.INTEGER, // Active (1) / Inactive (0)
+        allowNull: false,
+        defaultValue: 1
+    },
     },
     {
       tableName: "meter_service_charges",

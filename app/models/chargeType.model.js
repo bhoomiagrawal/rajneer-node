@@ -12,9 +12,10 @@ module.exports = (sequelize, Sequelize) => {
               allowNull: false,
           },
           status: {
-              type: Sequelize.INTEGER,
-              allowNull: false,
-          },
+            type: Sequelize.INTEGER, // Active (1) / Inactive (0)
+            allowNull: false,
+            defaultValue: 1
+        },
       },
       {
           tableName: 'charge_type', // Ensure the table name is correct

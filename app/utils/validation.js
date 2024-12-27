@@ -58,6 +58,7 @@ exports.slabValidation = [
     body('category_id').notEmpty().withMessage('Category Is Required.'),
 
 ];
+
 exports.baEnrollValidation = [
     body('pan_number') // Corresponds to "pan_number" in the Sequelize model
         .notEmpty().withMessage('Pan No Is Required.')
@@ -193,7 +194,12 @@ exports.baEnrollValidation = [
     //     // body('bill_agency_updated_by').notEmpty().withMessage('Category Is Required.'),  
 ];
 
+exports.binderValidation = [
+    // body('max_consumption').notEmpty().withMessage('Max consumption Is Required.'),
+    // body('min_consumption').notEmpty().withMessage('Min consumption Is Required.'),
+    // body('category_id').notEmpty().withMessage('Category Is Required.'),
 
+];
 
 exports.tariffValidation = [
     body("charge_type")

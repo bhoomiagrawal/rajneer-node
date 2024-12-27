@@ -99,6 +99,12 @@ const constant = {
     connectionType_not_found: "Connection Type not found",
     connectionType_not_deleted: "Connection Type not deleted",
 
+    binder_Added: " Binder added successfully",
+    binder_Updated: " Binder updated successfully",
+    binder_Deleted: " Binder deleted successfully",
+    binder_not_found: "Binder not found",
+    binder_not_deleted: "Binder not deleted",
+
 
     Attribute_Added: "Attribute added successfully",
     Attribute_Updated: "Attribute updated successfully",
