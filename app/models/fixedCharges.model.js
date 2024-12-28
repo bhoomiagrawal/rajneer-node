@@ -7,6 +7,14 @@ module.exports = (sequelize, Sequelize) => {
                 primaryKey: true,
                 autoIncrement: true,
             },
+            tariff_id: {
+                type: Sequelize.INTEGER,
+                references: {
+                  model: "tariff_configuration", // Name of the table
+                  key: "id",
+                },
+                allowNull: false,
+              },
             connection_size_id: {
                 type: Sequelize.INTEGER,
                 allowNull: false,
@@ -27,7 +35,7 @@ module.exports = (sequelize, Sequelize) => {
                 onDelete: 'NO ACTION',
                 onUpdate: 'CASCADE',
             },
-            fixed_charges: {
+            fixed_charge: {
                 type: Sequelize.FLOAT,
                 allowNull: false,
             },
@@ -50,6 +58,10 @@ module.exports = (sequelize, Sequelize) => {
             foreignKey: 'category_id',
             as: 'category',
         });
+        fixedCharges.belongsTo(models.tariffConfiguration, {
+            foreignKey: "tariff_id",
+            as: "tariff",
+          });
     };
 
     return fixedCharges;

@@ -23,7 +23,7 @@ exports.create = [
             // Proceed with the creation logic if validation passes
             const temp = {
                 charge_name: req.body.charge_name,
-                status: req.body.status,
+                status: 0,
             };
             let data = await ChargeType.create(temp, { new: true });
             return sendResponse({res, data})  

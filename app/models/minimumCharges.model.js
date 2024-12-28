@@ -7,6 +7,14 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
         autoIncrement: true,
       },
+      tariff_id: {
+        type: DataTypes.INTEGER,
+        references: {
+          model: "tariff_configuration", // Name of the table
+          key: "id",
+        },
+        allowNull: false,
+      },
       minimum_charge: {
         type: DataTypes.FLOAT,
         allowNull: false,
@@ -37,6 +45,15 @@ module.exports = (sequelize, DataTypes) => {
 
   // Associations
   MinimumCharges.associate = (models) => {
+
+    // Associate with Tariff
+
+    MinimumCharges.belongsTo(models.tariffConfiguration, {
+      foreignKey: "tariff_id",
+      as: "tariff",
+    });
+
+
     // Associate with Category
     MinimumCharges.belongsTo(models.categories, {
       foreignKey: 'category_id',

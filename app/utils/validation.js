@@ -46,10 +46,8 @@ exports.connectionTypeValidation = [
 ];
 
 exports.chargeTypeValidation = [
-    body('charge_name').notEmpty().withMessage('Charge Type is required.')
-        .isString().withMessage('Charge Type must be a string.'),
-    body('status').notEmpty().withMessage('Status is required.')
-        .isInt().withMessage('Status must be an integer.'),
+    body('charge_name').notEmpty().withMessage('Charge Type Is Required.'),
+    // body('status').notEmpty().withMessage('Status Is Required.')
 ];
 
 exports.slabValidation = [
@@ -196,23 +194,23 @@ exports.baEnrollValidation = [
 
 
 exports.tariffValidation = [
-    body("charge_type")
-        .exists().withMessage("Charge type is required.")
-        .isIn(["water_charge", "meter_service", "fixed_charge", "minimum_charge"])
-        .withMessage("Invalid charge type."),
-    body("connection_size_id")
-        .if(body("charge_type").not().equals("fixed_charge"))
-        .exists().withMessage("Connection size ID is required.")
-        .isInt().withMessage("Connection size ID must be an integer."),
-    body("slab_id")
-        .if(body("charge_type").isIn(["water_charge", "minimum_charge"]))
-        .exists().withMessage("Slab ID is required for the selected charge type.")
-        .isInt().withMessage("Slab ID must be an integer."),
-    body("ratePerThousand")
-        .exists().withMessage("Rate is required.")
-        .isFloat({ min: 0 }).withMessage("Rate must be a positive number."),
-    body("sso_id")
-        .exists().withMessage("SSO ID is required.")
-        .isInt().withMessage("SSO ID must be an integer."),
+  body("charge_type_id")
+    .exists().withMessage("Charge type is required.")
+    .isIn(["water_charge", "meter_service", "fixed_charge", "minimum_charge"])
+    .withMessage("Invalid charge type."),
+  // body("connection_size_id")
+  //   .if(body("charge_type").not().equals("fixed_charge"))
+  //   .exists().withMessage("Connection size ID is required.")
+  //   .isInt().withMessage("Connection size ID must be an integer."),
+  // body("slab_id")
+  //   .if(body("charge_type").isIn(["water_charge", "minimum_charge"]))
+  //   .exists().withMessage("Slab ID is required for the selected charge type.")
+  //   .isInt().withMessage("Slab ID must be an integer."),
+  body("ratePerThousand")
+    .exists().withMessage("Rate is required.")
+    .isFloat({ min: 0 }).withMessage("Rate must be a positive number."),
+  body("sso_id")
+    .exists().withMessage("SSO ID is required.")
+    .isInt().withMessage("SSO ID must be an integer."),
 ];
 
