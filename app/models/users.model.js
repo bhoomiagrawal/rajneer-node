@@ -12,10 +12,16 @@ module.exports = (sequelize, Sequelize) => {
         sso_id: {
             type: Sequelize.STRING,
             allowNull: false,
-            unique: true, // Ensures 'sso_id' is unique
+            unique: true, // Ensures 'sso_id' is uniques
             // indexe                                              
           },
         // other fields here...
+        name:{
+          type: Sequelize.STRING
+        },
+        email:{
+          type: Sequelize.STRING
+        }
       },
       {
         tableName: "users",
