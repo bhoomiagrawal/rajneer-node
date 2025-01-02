@@ -193,9 +193,14 @@ exports.baEnrollValidation = [
 ];
 
 exports.binderValidation = [
-    // body('max_consumption').notEmpty().withMessage('Max consumption Is Required.'),
-    // body('min_consumption').notEmpty().withMessage('Min consumption Is Required.'),
-    // body('category_id').notEmpty().withMessage('Category Is Required.'),
+    body('subdivision_id').notEmpty().withMessage('Category ID is required.')
+    .isInt({ min: 1 }).withMessage('Category ID must be a valid positive integer.'),
+    body('chowkdi_id').notEmpty().withMessage('Category ID is required.')
+    .isInt({ min: 1 }).withMessage('Category ID must be a valid positive integer.'),
+    body('binder_name').notEmpty().withMessage('Subcategory name is required.')
+    .isLength({ min: 3 }).withMessage('Subcategory name must be at least 3 characters long.'),
+    body('binder_code').notEmpty().withMessage('Subcategory name is required.')
+    .isLength({ min: 3 }).withMessage('Subcategory name must be at least 3 characters long.'),
 
 ];
 
