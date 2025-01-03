@@ -32,8 +32,8 @@ exports.meterStatusValidation = [
         .isString().withMessage('Meter Status must be a string.'),
     body('description').notEmpty().withMessage('Meter Status Description is required.')
         .isString().withMessage('Description must be a string.'),
-    body('status').notEmpty().withMessage('Status is required.')
-        .isInt().withMessage('Status must be an integer.')
+    // body('status').notEmpty().withMessage('Status is required.')
+    //     .isInt().withMessage('Status must be an integer.')
 ];
 
 exports.connectionTypeValidation = [
