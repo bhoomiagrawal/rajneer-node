@@ -148,7 +148,7 @@ const { sendErrorResponse, sendResponse } = require("../utils/lib");
 //         stpCharge,
 //         idcCharge,
 //         rebate_applied,
-      
+
 //         totalBill : bill,
 //       };
 
@@ -282,8 +282,6 @@ function getRebate(waterCharge) {
   return parseFloat(rebateCharge.toFixed(2));
 }
 
-
-
 exports.generateBill = async (req, res) => {
   const {
     category_id,
@@ -304,14 +302,13 @@ exports.generateBill = async (req, res) => {
     }
 
     // Only include `prevMonth` if `category_id === 1`
-    const monthData = category_id === 1
-      ? [
-          { label: "Previous Month", ...prevMonth },
-          { label: "Current Month", ...currMonth },
-        ]
-      : [
-          { label: "Current Month", ...currMonth },
-        ];
+    const monthData =
+      category_id === 1
+        ? [
+            { label: "Previous Month", ...prevMonth },
+            { label: "Current Month", ...currMonth },
+          ]
+        : [{ label: "Current Month", ...currMonth }];
 
     const resultDetails = [];
     let totalBill = 0;
@@ -382,16 +379,19 @@ exports.generateBill = async (req, res) => {
       const finalWaterCharge = Math.max(minimumCharge, waterCharges);
 
       // Apply Sewerage and STP Charges
-      let sewerageCharge = sewerage
-        ? getSewerageCharge(finalWaterCharge)
-        : 0;
+      let sewerageCharge = sewerage ? getSewerageCharge(finalWaterCharge) : 0;
       let stpCharge = stp ? getStpCharge(finalWaterCharge) : 0;
 
       // Apply Rebate
       let rebate_applied = rebate ? getRebate(finalWaterCharge) : 0;
 
       // Apply IDC Charges
-      let bill = fixedCharge + finalWaterCharge + meterServiceCharge + sewerageCharge + stpCharge;
+      let bill =
+        fixedCharge +
+        finalWaterCharge +
+        meterServiceCharge +
+        sewerageCharge +
+        stpCharge;
       let idcCharge = getIDC(consumption, bill);
       bill = bill + idcCharge - rebate_applied;
 
@@ -407,7 +407,7 @@ exports.generateBill = async (req, res) => {
         stpCharge,
         idcCharge,
         rebate_applied,
-       bill,
+        bill,
       };
 
       totalBill += monthCharges.bill;
@@ -416,15 +416,19 @@ exports.generateBill = async (req, res) => {
     }
 
     // Return response
-    return res.status(200).json({
-      message: "Bill generated successfully",
-      billDetails: {
-        detailsByMonth: resultDetails,
-        totalBill
+
+    return sendResponse({
+      res,
+      data: {
+        message: "Bill generated successfully",
+        billDetails: {
+          detailsByMonth: resultDetails,
+          totalBill,
+        },
       },
     });
+    // return res.status(200).json({});
   } catch (error) {
-    console.error("Error generating bill:", error);
     return res.status(500).json({ message: "Failed to generate bill", error });
   }
 };
