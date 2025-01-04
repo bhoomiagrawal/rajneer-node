@@ -8,10 +8,10 @@ module.exports = (sequelize, Sequelize) => {
         autoIncrement: true,
       },
       max_consumption: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.STRING,
       },
       min_consumption: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.STRING,
       },
       category_id: {
         type: Sequelize.INTEGER,
