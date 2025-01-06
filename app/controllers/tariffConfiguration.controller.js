@@ -9,8 +9,6 @@ const { getChargesName } = require("../utils/common");
 const { sendErrorResponse, sendResponse } = require("../utils/lib");
 const { tariffValidation } = require("../utils/validation");
 
-
-
 exports.create = [
   async (req, res) => {
     const {
@@ -78,9 +76,16 @@ exports.create = [
         }
         if (charge_name === "waterCharges" && slab_id) {
           const slabExists = await validateExistence(Slab, slab_id, "Slab");
+
           if (!slabExists) throw new Error(`Slab with ID ${slab_id} not found`);
         }
 
+        // Determine if the bulk flag should be true or false based on connection_size_id
+        const isBulk = !(
+          connSizeId === 1 ||
+          connSizeId === 2 ||
+          connSizeId === 3
+        );
         // Create a tariff configuration
         const newTariff = await db.tariffConfiguration.create(
           {
@@ -135,6 +140,7 @@ exports.create = [
               connection_size_id: connSizeId,
               slab_id,
               extra_details: extra_details || null,
+              isBulk,
             },
             { transaction }
           );
@@ -144,19 +150,20 @@ exports.create = [
       // Commit the transaction
       await transaction.commit();
       return sendResponse({
-        res, data:{message: "Tariff created successfully.", createdTariffs}
-      })
-     
+        res,
+        data: { message: "Tariff created successfully.", createdTariffs },
+      });
     } catch (err) {
       // Rollback transaction only if it's not already committed
       if (!transaction.finished) {
         await transaction.rollback();
       }
-      console.log('err', err)
-     return sendErrorResponse({
-      res, err, msg:"Failed to create tariff."
-     })
-      
+      console.log("err", err);
+      return sendErrorResponse({
+        res,
+        err,
+        msg: "Failed to create tariff.",
+      });
     }
   },
 ];

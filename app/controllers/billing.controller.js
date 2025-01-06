@@ -8,182 +8,7 @@ const ConnectionSize = db.connectionSize;
 const { getChargesName } = require("../utils/common");
 const { sendErrorResponse, sendResponse } = require("../utils/lib");
 
-// exports.generateBill = async (req, res) => {
-//   const {
-//     category_id,
-//     connection_size_id,
-//     sewerage,
-//     stp,
-//     rebate,
-//     currMonth,
-//     prevMonth,
-//     last_reading,
-//     last_reading_date,
-//   } = req.body;
-//   // const transaction = await db.sequelize.transaction();
-//   try {
-//     // Validation: Ensure payload contains required fields
-//     if (!category_id || !connection_size_id || !currMonth ) {
-//       return res.status(400).json({ message: "Invalid payload" });
-//     }
 
-//     const monthData = [
-//       { label: "Previous Month", ...prevMonth },
-//       { label: "Current Month", ...currMonth },
-//     ];
-
-//     const resultDetails = [];
-//     let totalBill = 0;
-
-//     // Process each month independently
-//     for (const month of monthData) {
-//       const { label, consumption, reading_date, meter_status_id } = month;
-
-//       if (!consumption) {
-//         return res
-//           .status(400)
-//           .json({ message: `Consumption missing for ${label}` });
-//       }
-//       console.log("category_id", category_id);
-//       // Initialize water and minimum charges
-
-//       // Calculate Water Charges for the month
-
-//       let waterCharges = 0;
-//       let minimumCharge = 0;
-//       // Apply Condition 1: If criteria are met, both water and minimum charges are zero
-
-//       // Fetch Minimum Charge Tariff
-//       const minimumChargeTariff = await db.tariffConfiguration.findOne({
-//         where: {
-//           category_id,
-//           connection_size_id,
-//           charge_type_id: 4, // Minimum Charges
-//         },
-//         // transaction,
-//       });
-
-//       if (
-//         category_id === 1 &&
-//         connection_size_id === 1 &&
-//         meter_status_id === 1 &&
-//         consumption <= 15000
-//       ) {
-//         waterCharges = 0;
-//         minimumCharge = 0;
-//       } else {
-//         waterCharges = await calculateWaterCharges({
-//           category_id,
-//           connection_size_id,
-//           consumption,
-//         });
-
-//         minimumCharge = minimumChargeTariff?.ratePerThousand || 0;
-//       }
-
-//       console.log("waterCharges", waterCharges);
-//       console.log("minimumCharge", minimumCharge);
-
-//       // Fetch Fixed Charge Tariff
-//       const fixedChargeTariff = await db.tariffConfiguration.findOne({
-//         where: {
-//           category_id,
-//           connection_size_id,
-//           charge_type_id: 2, // Fixed Charges
-//         },
-//         // transaction,
-//       });
-
-//       const fixedCharge = fixedChargeTariff?.ratePerThousand || 0;
-//       console.log("fixedCharge", fixedCharge);
-
-//       // Fetch meter service Charge Tariff
-//       const meterServiceChargeTariff = await db.tariffConfiguration.findOne({
-//         where: {
-//           connection_size_id,
-//           charge_type_id: 3, // meter service Charges
-//         },
-//         // transaction,
-//       });
-
-//       const meterServiceCharge = meterServiceChargeTariff?.ratePerThousand || 0;
-//       console.log("meterServiceCharge", meterServiceCharge);
-
-//       // Apply Condition 2: Take the greater of minimumCharge and waterCharges
-//       const finalWaterCharge = Math.max(minimumCharge, waterCharges);
-
-//       //Apply sewerage charges
-//       let sewerageCharge = 0;
-//       let stpCharge = 0;
-//       if (sewerage) {
-//         sewerageCharge = getSewerageCharge(finalWaterCharge);
-//         if (stp) {
-//           stpCharge = getStpCharge(finalWaterCharge);
-//         }
-//       }
-
-//       let rebate_applied = 0;
-//       if (rebate) {
-//         rebate_applied = getRebate(finalWaterCharge);
-//       }
-//       let bill =
-//         fixedCharge +
-//         finalWaterCharge +
-//         meterServiceCharge +
-//         sewerageCharge +
-//         stpCharge;
-
-//       let idcCharge = getIDC(consumption, bill);
-//       bill = bill + idcCharge - rebate_applied;
-//       const monthCharges = {
-//         label,
-//         reading_date,
-//         meter_status_id,
-//         fixedCharge,
-//         minimumCharge,
-//         // waterCharges,
-//         waterCharge: finalWaterCharge,
-//         meterServiceCharge,
-//         sewerageCharge,
-//         stpCharge,
-//         idcCharge,
-//         rebate_applied,
-
-//         totalBill : bill,
-//       };
-
-//       totalBill += monthCharges.bill;
-//       resultDetails.push(monthCharges);
-//     }
-
-//     // Add Additional Charges (Sewerage, STP, Rebate)
-//     // const sewerageCharge = sewerage ? 100 : 0; // Example logic
-//     // const stpCharge = stp ? 50 : 0; // Example logic
-//     // const rebateValue = rebate ? -25 : 0;
-
-//     // const finalTotal = totalBill + sewerageCharge + stpCharge + rebateValue;
-
-//     // Commit Transaction and Generate Response
-//     // await transaction.commit();
-//     return res.status(200).json({
-//       message: "Bill generated successfully",
-//       billDetails: {
-//         // waterCharges,
-//         detailsByMonth: resultDetails,
-//         // additionalCharges: {
-//         //   sewerageCharge,
-//         //   stpCharge,
-//         //   rebateValue,
-//         // },
-//         // finalTotal,
-//       },
-//     });
-//   } catch (error) {
-//     // await transaction.rollback();
-//     console.error("Error generating bill:", error);
-//     return res.status(500).json({ message: "Failed to generate bill", error });
-//   }
-// };
 
 // Reuse calculateWaterCharges logic here or adapt if slab-based logic differs
 const calculateWaterCharges = async ({
@@ -192,6 +17,11 @@ const calculateWaterCharges = async ({
   consumption,
 }) => {
   try {
+
+     // Determine if bulk is false based on connection_size_id
+     const isBulk = !(connection_size_id === 1 || connection_size_id === 2 || connection_size_id === 3);
+
+
     // Step 1: Fetch Tariff Configuration and Slabs
     const tariffs = await db.tariffConfiguration.findAll({
       where: { category_id, connection_size_id, charge_type_id: 1 }, // charge_type_id = 1 for waterCharges
@@ -199,7 +29,9 @@ const calculateWaterCharges = async ({
         {
           model: db.slabs,
           as: "slab",
-          attributes: ["min_consumption", "max_consumption"],
+          // attributes: ["min_consumption", "max_consumption"],
+          attributes: ["min_consumption", "max_consumption", "isBulk"],
+          where: isBulk ? {} : { isBulk: false }, // Enforce the bulk condition
         },
       ],
       order: [[{ model: db.slabs, as: "slab" }, "min_consumption", "ASC"]],
