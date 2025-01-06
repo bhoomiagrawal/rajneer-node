@@ -132,6 +132,7 @@ exports.getSingle = async (req, res) => {
 
 exports.getAll = async (req, res) => {
     try {
+        console.log("");
         // Use the helper to extract pagination and search information for the specific field ('Connection_Size')
         const { offset, perPage, whereCondition } = getPaginationAndSearch(req, 'meter_service');  // Pass the field for search
 
@@ -140,14 +141,14 @@ exports.getAll = async (req, res) => {
             offset,
             limit: perPage,
             where: whereCondition,  // Apply search filter if exists
-            include: [
-                {
-                    model: db.connectionSize,  // Include the associated Category data
-                    as: 'connectionSize',  // Alias for the relation
-                }
-            ]
+            // include: [
+            //     {
+            //         model: db.connectionSize,  // Include the associated Category data
+            //         as: 'connectionSize',  // Alias for the relation
+            //     }
+            // ]
         });
-
+        const totalPages = meterServiceList.count > 0 ? Math.ceil(meterServiceList.count / perPage) : 0;
         // if (!meterServiceList) {
         //     return sendErrorResponse({
         //         res,
@@ -155,11 +156,20 @@ exports.getAll = async (req, res) => {
         //         status:404
         //     })
         // }
+        console.log("data",meterServiceList)
         // Return the modified response with status and message inside subCategory object
         return sendResponse({
-            res, data:{
-                meterService: meterServiceList.rows,  // Rename rows to data
-                count: meterServiceList.count   // Include the total count
+            res,
+            //  data:{
+            //     meterService: meterServiceList.rows,  // Rename rows to data
+            //     count: meterServiceList.count   // Include the total count
+            // }
+            data: {
+                meterService: meterServiceList.rows,  // Rename rows to subCategory data
+                count: meterServiceList.count,   // Include the total count for pagination
+                totalPages: totalPages, // Calculate total pages
+                currentPage: req.query.page || 1, // Current page based on the request
+                pageSize: perPage, // Number of items per page
             }
         })
         res.status(200).json({

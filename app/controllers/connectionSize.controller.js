@@ -109,18 +109,27 @@ exports.getAll = async (req, res) => {
             limit: perPage,
             where: whereCondition,  // Apply search filter if exists
         });
-        if (!connectionSizeList) {
-            return sendErrorResponse({
-                res,
-                msg:message.Record_not_found,
-                status:404
-            })
-        }
+        const totalPages = connectionSizeList.count > 0 ? Math.ceil(connectionSizeList.count / perPage) : 0;
+        // if (!connectionSizeList) {
+        //     return sendErrorResponse({
+        //         res,
+        //         msg:message.Record_not_found,
+        //         status:404
+        //     })
+        // }
  // Return the modified response with status and message inside subCategory object
  return sendResponse({
-    res, data:{
-        connectionSize: connectionSizeList.rows,  // Rename rows to data
-        count: connectionSizeList.count  // Include the total count
+    res, 
+    // data:{
+    //     connectionSize: connectionSizeList.rows,  // Rename rows to data
+    //     count: connectionSizeList.count  // Include the total count
+    // }
+    data: {
+        connectionSize: connectionSizeList.rows,  // Rename rows to subCategory data
+        count: connectionSizeList.count,   // Include the total count for pagination
+        totalPages: totalPages, // Calculate total pages
+        currentPage: req.query.page || 1, // Current page based on the request
+        pageSize: perPage, // Number of items per page
     }
 })        
     } catch (err) {

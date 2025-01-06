@@ -145,6 +145,7 @@ exports.getAll = async (req, res) => {
             limit: perPage,
             where: whereCondition,  // Apply search filter if exists
         });
+        const totalPages = binderModelList.count > 0 ? Math.ceil(binderModelList.count / perPage) : 0;
         // if (!binderModelList) {
         //     return sendErrorResponse({
         //         res,
@@ -154,9 +155,17 @@ exports.getAll = async (req, res) => {
         // }
  // Return the modified response with status and message inside subCategory object
  return sendResponse({
-    res, data:{
-        binderModel: binderModelList.rows,  // Rename rows to data
-        count: binderModelList.count  // Include the total count
+    res, 
+    // data:{
+    //     binderModel: binderModelList.rows,  // Rename rows to data
+    //     count: binderModelList.count  // Include the total count
+    // }
+    data: {
+        binder: binderModelList.rows,  // Rename rows to subCategory data
+        count: binderModelList.count,   // Include the total count for pagination
+        totalPages: totalPages, // Calculate total pages
+        currentPage: req.query.page || 1, // Current page based on the request
+        pageSize: perPage, // Number of items per page
     }
 })        
     } catch (err) {
