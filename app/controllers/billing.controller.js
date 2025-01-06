@@ -8,8 +8,6 @@ const ConnectionSize = db.connectionSize;
 const { getChargesName } = require("../utils/common");
 const { sendErrorResponse, sendResponse } = require("../utils/lib");
 
-
-
 // Reuse calculateWaterCharges logic here or adapt if slab-based logic differs
 const calculateWaterCharges = async ({
   category_id,
@@ -17,27 +15,30 @@ const calculateWaterCharges = async ({
   consumption,
 }) => {
   try {
-
-     // Determine if bulk is false based on connection_size_id
-     const isBulk = !(connection_size_id === 1 || connection_size_id === 2 || connection_size_id === 3);
-
+    // Determine if bulk is false based on connection_size_id
+    const isBulk = !(
+      connection_size_id == 1 ||
+      connection_size_id == 2 ||
+      connection_size_id == 3
+    );
 
     // Step 1: Fetch Tariff Configuration and Slabs
     const tariffs = await db.tariffConfiguration.findAll({
-      where: { category_id, connection_size_id, charge_type_id: 1 }, // charge_type_id = 1 for waterCharges
+      where: { category_id, charge_type_id: 1 }, // charge_type_id = 1 for waterCharges
       include: [
         {
           model: db.slabs,
           as: "slab",
           // attributes: ["min_consumption", "max_consumption"],
           attributes: ["min_consumption", "max_consumption", "isBulk"],
-          where: isBulk ? {} : { isBulk: false }, // Enforce the bulk condition
+          where: isBulk , // Enforce the bulk condition
         },
       ],
       order: [[{ model: db.slabs, as: "slab" }, "min_consumption", "ASC"]],
     });
 
     if (!tariffs || tariffs.length === 0) {
+      
       throw new Error(
         "No water tariff configurations found for the given category and connection size."
       );
@@ -144,6 +145,9 @@ exports.generateBill = async (req, res) => {
 
     const resultDetails = [];
     let totalBill = 0;
+    let lps = 0;
+
+    let totaoBillwithLPS = 0
 
     // Process each month independently
     for (const month of monthData) {
@@ -244,6 +248,7 @@ exports.generateBill = async (req, res) => {
 
       totalBill += monthCharges.bill;
       totalBill = Math.round(totalBill);
+      lps = Math.round(totalBill * 10) / 100;
       resultDetails.push(monthCharges);
     }
 
@@ -256,6 +261,8 @@ exports.generateBill = async (req, res) => {
         billDetails: {
           detailsByMonth: resultDetails,
           totalBill,
+          lps,
+          totaoBillwithLPS: totalBill + lps
         },
       },
     });
