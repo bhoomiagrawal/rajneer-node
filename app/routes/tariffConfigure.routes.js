@@ -7,9 +7,6 @@ const router = express.Router();
 
 
 router.post("/", TariffConfiguration.create);
-// router.get("/", TariffConfiguration.getAll);
-// router.put("/:id", TariffConfiguration.update);
-// router.delete("/:id", TariffConfiguration.delete);
-// router.get("/:id", TariffConfiguration.getSingle);
+
 
 module.exports = router

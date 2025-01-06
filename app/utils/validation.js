@@ -32,8 +32,8 @@ exports.meterStatusValidation = [
         .isString().withMessage('Meter Status must be a string.'),
     body('description').notEmpty().withMessage('Meter Status Description is required.')
         .isString().withMessage('Description must be a string.'),
-    body('status').notEmpty().withMessage('Status is required.')
-        .isInt().withMessage('Status must be an integer.')
+    // body('status').notEmpty().withMessage('Status is required.')
+    //     .isInt().withMessage('Status must be an integer.')
 ];
 
 exports.connectionTypeValidation = [
@@ -51,8 +51,8 @@ exports.chargeTypeValidation = [
 ];
 
 exports.slabValidation = [
-    body('max_consumption').notEmpty().withMessage('Max consumption Is Required.'),
-    body('min_consumption').notEmpty().withMessage('Min consumption Is Required.'),
+    // body('max_consumption').notEmpty().withMessage('Max consumption Is Required.'),
+    // body('min_consumption').notEmpty().withMessage('Min consumption Is Required.'),
     body('category_id').notEmpty().withMessage('Category Is Required.'),
 
 ];

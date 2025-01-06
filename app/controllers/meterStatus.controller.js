@@ -24,7 +24,7 @@ exports.create = [
                 meter_status: req.body.meter_status,
                 // rule: req.body.rule,
                 description: req.body.description,
-                status: req.body.status,
+                // status: req.body.status,
             };
             let data = await meteStatusCode.create(temp, { new: true });
             return sendResponse({res, data})  
