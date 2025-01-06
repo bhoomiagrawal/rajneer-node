@@ -13,6 +13,7 @@ const calculateWaterCharges = async ({
   category_id,
   connection_size_id,
   consumption,
+  connection_type_id,
 }) => {
   try {
     // Determine if bulk is false based on connection_size_id
@@ -31,14 +32,13 @@ const calculateWaterCharges = async ({
           as: "slab",
           // attributes: ["min_consumption", "max_consumption"],
           attributes: ["min_consumption", "max_consumption", "isBulk"],
-          where: isBulk , // Enforce the bulk condition
+          where: isBulk, // Enforce the bulk condition
         },
       ],
       order: [[{ model: db.slabs, as: "slab" }, "min_consumption", "ASC"]],
     });
 
     if (!tariffs || tariffs.length === 0) {
-      
       throw new Error(
         "No water tariff configurations found for the given category and connection size."
       );
@@ -75,6 +75,10 @@ const calculateWaterCharges = async ({
       throw new Error(
         "Remaining consumption exceeds slab limits. Check tariff configuration."
       );
+    }
+
+    if (connection_type_id === 2) {
+      totalWaterCharge *= 1.5;
     }
 
     return totalWaterCharge;
@@ -126,6 +130,7 @@ exports.generateBill = async (req, res) => {
     prevMonth,
     last_reading,
     last_reading_date,
+    connection_type_id,
   } = req.body;
 
   try {
@@ -147,7 +152,7 @@ exports.generateBill = async (req, res) => {
     let totalBill = 0;
     let lps = 0;
 
-    let totaoBillwithLPS = 0
+    let totaoBillwithLPS = 0;
 
     // Process each month independently
     for (const month of monthData) {
@@ -185,9 +190,14 @@ exports.generateBill = async (req, res) => {
           category_id,
           connection_size_id,
           consumption,
+          connection_type_id,
         });
 
         minimumCharge = minimumChargeTariff?.ratePerThousand || 0;
+        // Apply multiplier if connection_type_id === 2
+        if (connection_type_id === 2) {
+          minimumCharge *= 1.5;
+        }
       }
 
       // Fetch Fixed Charge Tariff
@@ -230,6 +240,7 @@ exports.generateBill = async (req, res) => {
         stpCharge;
       let idcCharge = getIDC(consumption, bill);
       bill = bill + idcCharge - rebate_applied;
+      bill = parseFloat(bill.toFixed(2));
 
       const monthCharges = {
         label,
@@ -262,7 +273,7 @@ exports.generateBill = async (req, res) => {
           detailsByMonth: resultDetails,
           totalBill,
           lps,
-          totaoBillwithLPS: totalBill + lps
+          totaoBillwithLPS: totalBill + lps,
         },
       },
     });
