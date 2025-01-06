@@ -273,7 +273,7 @@ exports.generateBill = async (req, res) => {
           detailsByMonth: resultDetails,
           totalBill,
           lps,
-          totaoBillwithLPS: totalBill + lps,
+          totalBillwithLPS: totalBill + lps,
         },
       },
     });
