@@ -1,8 +1,6 @@
 const { validationResult } = require("express-validator");
 const { Op, Sequelize } = require("sequelize");
-// const con = require('./../../config/database');
 const message = require('../utils/constant');
-const { SELECT } = require("sequelize/lib/query-types");
 const meterStatusValidation = require('../utils/validation').meterStatusValidation;
 const { getPaginationAndSearch } = require('../utils/pagination');
 const { sendResponse, sendErrorResponse } = require("../utils/lib");
@@ -22,7 +20,7 @@ exports.create = [
             // Proceed with the creation logic if validation passes
             const temp = {
                 meter_status: req.body.meter_status,
-                // rule: req.body.rule,
+                calc_rule: req.body.calc_rule,
                 description: req.body.description,
                 // status: req.body.status,
             };
@@ -46,7 +44,7 @@ exports.update = [
             const id = req.params.id;
             const data = {
                 meter_status: req?.body?.meter_status,
-                // rule: req?.body?.rule,
+                calc_rule: req?.body?.calc_rule,
                 description: req?.body?.description,
                 status: req?.body?.status,
             };
