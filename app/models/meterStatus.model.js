@@ -8,9 +8,9 @@ module.exports = (sequelize, Sequelize) => {
       meter_status: {
         type: Sequelize.STRING
       },
-      // rule: {
-      //   type: Sequelize.STRING
-      // },
+      calc_rule: {
+        type: Sequelize.STRING
+      },
       description: {
         type: Sequelize.STRING
       },
