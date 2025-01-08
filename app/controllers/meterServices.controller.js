@@ -132,10 +132,10 @@ exports.getSingle = async (req, res) => {
 
 exports.getAll = async (req, res) => {
     try {
-        console.log("");
         // Use the helper to extract pagination and search information for the specific field ('Connection_Size')
         const { offset, perPage, whereCondition } = getPaginationAndSearch(req, 'meter_service');  // Pass the field for search
-
+        const temp = await MeterServiceCharge.findAll()
+        console.log("enter",temp);
         // Fetch the connection size list with pagination and search filter
         let meterServiceList = await MeterServiceCharge.findAndCountAll({
             offset,

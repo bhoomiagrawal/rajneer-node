@@ -7,8 +7,8 @@ module.exports = {
 
   // HOST: "localhost",
   // USER: "root",
-  // PASSWORD: "Root@123",
-  // DB: "rajneer2",
+  // PASSWORD: "Phed@root",
+  // DB: "rajneernew",
   // dialect: "mysql",
   // pool: {
   //   max: 5,
