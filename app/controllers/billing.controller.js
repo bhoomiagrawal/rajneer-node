@@ -137,10 +137,8 @@ exports.generateBill = async (req, res) => {
   
         // Throw error if CW is true but the category_id is not 1
         if (cw && originalCategoryId !== 1) {
-            return sendErrorResponse({res, err:`Invalid category_id for CW flag in ${label}. If CW is true, category_id must be 1.`})
-        //   return res.status(400).json({
-        //     message: `Invalid category_id for CW flag in ${label}. If CW is true, category_id must be 1.`,
-        //   });
+            return sendErrorResponse({res, err:{}, msg: `Invalid category_id for CW flag in ${label}. If CW is true, category_id must be 1.`})
+        
         }
   
         // Use CW logic: adjust category ID based on CW property for the specific month
@@ -248,11 +246,13 @@ exports.generateBill = async (req, res) => {
           },
         },
       });
-    } catch (error) {
+    } catch (err) {
       // Handle and return errors gracefully
-      return res
-        .status(500)
-        .json({ message: "Failed to generate bill", error: error.message });
+
+      return sendErrorResponse({
+        res, err, msg:"Failed to generate bill"
+      })
+      
     }
   };
   
