@@ -7,6 +7,7 @@ const calculateWaterCharges = async ({
   category_id,
   connection_size_id,
   consumption,
+  connection_type_id,
 }) => {
   try {
     const isBulk = !(
@@ -16,7 +17,7 @@ const calculateWaterCharges = async ({
     );
 
     const tariffs = await db.tariffConfiguration.findAll({
-      where: { category_id, connection_size_id, charge_type_id: 1 }, // charge_type_id = 1 for waterCharges
+      where: { category_id, charge_type_id: 1 }, // charge_type_id = 1 for waterCharges
       include: [
         {
           model: db.slabs,
@@ -59,6 +60,10 @@ const calculateWaterCharges = async ({
 
     if (connection_type_id === 2) {
       totalWaterCharge *= 1.5; // Apply 1.5x multiplier for non-domestic connections
+    }
+
+    if (connection_type_id === 2) {
+      totalWaterCharge *= 1.5;
     }
 
     return totalWaterCharge;
@@ -124,6 +129,9 @@ exports.generateBill = async (req, res) => {
 
     const resultDetails = [];
     let totalBill = 0;
+    let lps = 0;
+
+    let totaoBillwithLPS = 0;
 
     for (const month of monthData) {
       const { label, consumption, reading_date, meter_status_id } = month;
@@ -201,14 +209,14 @@ exports.generateBill = async (req, res) => {
         stpCharge,
         idcCharge,
         rebate_applied,
-       bill,
+        bill,
       };
 
       totalBill += bill;
       resultDetails.push(monthCharges);
     }
 
-    const lps = Math.round((totalBill * 10) / 100);
+     lps = Math.round((totalBill * 10) / 100);
     const totalBillWithLPS = totalBill + lps;
 
     return sendResponse({
@@ -223,6 +231,7 @@ exports.generateBill = async (req, res) => {
         },
       },
     });
+    // return res.status(200).json({});
   } catch (error) {
     return res
       .status(500)
