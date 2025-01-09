@@ -35,10 +35,7 @@ module.exports = (sequelize, Sequelize) => {
                 onDelete: 'NO ACTION',
                 onUpdate: 'CASCADE',
             },
-            // fixed_charge: {
-            //     type: Sequelize.FLOAT,
-            //     allowNull: false,
-            // },
+            
         },
         {
             tableName: 'fixed_charges', // Table name in the database

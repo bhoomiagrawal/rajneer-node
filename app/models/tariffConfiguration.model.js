@@ -53,8 +53,13 @@ module.exports = (sequelize, Sequelize) => {
           },
           ratePerThousand: {
               type: Sequelize.FLOAT,
-              allowNull: false,
+              allowNull: true,
           },
+          chargePercent: {
+            type: Sequelize.FLOAT,
+            allowNull: true, // Allow null for already existing rows
+        },
+        
           created_by: {
               type: Sequelize.STRING,
               allowNull: false,

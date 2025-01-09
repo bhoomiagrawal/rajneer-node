@@ -23,9 +23,7 @@ module.exports = (sequelize, Sequelize) => {
         },
         allowNull: false,
       },
-      // meter_service_charge: {
-      //   type: Sequelize.STRING,
-      // },
+      
       status: {
         type: Sequelize.INTEGER, // Active (1) / Inactive (0)
         allowNull: false,

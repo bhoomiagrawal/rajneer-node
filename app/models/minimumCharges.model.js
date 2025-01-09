@@ -15,10 +15,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         allowNull: false,
       },
-      minimum_charge: {
-        type: DataTypes.FLOAT,
-        allowNull: false,
-      },
+      
       category_id: {
         type: DataTypes.INTEGER,
         references: {
