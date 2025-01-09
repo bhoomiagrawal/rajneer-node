@@ -23,8 +23,8 @@ exports.meterServiceChargeValidation = [
         .isInt().withMessage('Connection Size ID must be an integer.'),
     body('meter_service_charge').notEmpty().withMessage('Meter Service Charge is required.')
         .isString().withMessage('Meter Service Charge must be a string.'),
-    body('status').notEmpty().withMessage('Status is required.')
-        .isInt().withMessage('Status must be an integer.')
+    // body('status').notEmpty().withMessage('Status is required.')
+    //     .isInt().withMessage('Status must be an integer.')
 ];
 
 exports.meterStatusValidation = [
@@ -41,8 +41,8 @@ exports.connectionTypeValidation = [
         .isString().withMessage('Connection Type must be a string.'),
     body('description').notEmpty().withMessage('Description is required.')
         .isString().withMessage('Description must be a string.'),
-    body('status').notEmpty().withMessage('Status is required.')
-        .isInt().withMessage('Status must be an integer.')
+    // body('status').notEmpty().withMessage('Status is required.')
+    //     .isInt().withMessage('Status must be an integer.')
 ];
 
 exports.chargeTypeValidation = [
@@ -183,9 +183,9 @@ exports.baEnrollValidation = [
         .notEmpty().withMessage('Work Order Cost Is Required.')
         .isFloat().withMessage('Work Order Cost must be a valid number.'),
 
-    body('status') // Corresponds to "status" in the Sequelize model
-        .notEmpty().withMessage('Status Is Required.')
-        .isInt().withMessage('Status must be an integer.')
+    // body('status') // Corresponds to "status" in the Sequelize model
+    //     .notEmpty().withMessage('Status Is Required.')
+    //     .isInt().withMessage('Status must be an integer.')
     //     // body('bill_agency_address_flag').notEmpty().withMessage('Category Is Required.'),
     //     // body('bill_agency_delete_flag').notEmpty().withMessage('Category Is Required.'),
     //     // body('bill_agency_created_by').notEmpty().withMessage('Category Is Required.'),
