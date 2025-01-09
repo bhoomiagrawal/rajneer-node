@@ -19,7 +19,7 @@ module.exports = (sequelize, Sequelize) => {
           model: 'categories',
           key: 'id',
         },
-        allowNull: false,
+        allowNull: true,
       },
       isBulk: {
         type: Sequelize.BOOLEAN,

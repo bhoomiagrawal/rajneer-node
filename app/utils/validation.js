@@ -53,7 +53,7 @@ exports.chargeTypeValidation = [
 exports.slabValidation = [
     // body('max_consumption').notEmpty().withMessage('Max consumption Is Required.'),
     // body('min_consumption').notEmpty().withMessage('Min consumption Is Required.'),
-    body('category_id').notEmpty().withMessage('Category Is Required.'),
+    // body('category_id').notEmpty().withMessage('Category Is Required.'),
 
 ];
 
