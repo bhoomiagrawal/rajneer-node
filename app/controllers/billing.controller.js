@@ -2,73 +2,6 @@ const db = require("../models");
 
 const { sendErrorResponse, sendResponse } = require("../utils/lib");
 
-// Function to calculate water charges based on category, connection, and consumption
-const calculateWaterCharges = async ({
-  category_id,
-  connection_size_id,
-  consumption,
-  connection_type_id,
-}) => {
-  try {
-    const isBulk = !(
-      connection_size_id == 1 ||
-      connection_size_id == 2 ||
-      connection_size_id == 3
-    );
-
-    const tariffs = await db.tariffConfiguration.findAll({
-      where: { category_id, charge_type_id: 1 }, // charge_type_id = 1 for waterCharges
-      include: [
-        {
-          model: db.slabs,
-          as: "slab",
-          attributes: ["min_consumption", "max_consumption", "isBulk"],
-          where: isBulk, // Only include bulk or non-bulk as required
-        },
-      ],
-      order: [[{ model: db.slabs, as: "slab" }, "min_consumption", "ASC"]],
-    });
-
-    if (!tariffs || tariffs.length === 0) {
-      throw new Error(
-        "No water tariff configurations found for the given category and connection size."
-      );
-    }
-
-    let totalWaterCharge = 0;
-    let remainingConsumption = consumption;
-
-    for (const tariff of tariffs) {
-      const { ratePerThousand, slab } = tariff;
-      const { min_consumption, max_consumption } = slab;
-
-      const slabMin = min_consumption || 0;
-      const slabMax = max_consumption || remainingConsumption;
-
-      const applicableConsumption = Math.min(
-        remainingConsumption,
-        slabMax - slabMin
-      );
-
-      if (applicableConsumption > 0) {
-        totalWaterCharge += (applicableConsumption / 1000) * ratePerThousand;
-        remainingConsumption -= applicableConsumption;
-      }
-
-      if (remainingConsumption <= 0) break;
-    }
-
-    if (connection_type_id === 2) {
-      totalWaterCharge *= 1.5; // Apply 1.5x multiplier for non-domestic connections
-    }
-
-    return totalWaterCharge;
-  } catch (error) {
-    console.error("Error in calculateWaterCharges:", error.message);
-    throw error;
-  }
-};
-
 // Utility functions for other charges
 const getSewerageCharge = (waterCharge) => {
   return parseFloat(((waterCharge * 20) / 100).toFixed(2));
@@ -94,6 +27,91 @@ const getRebate = (waterCharge, discount = 5) => {
   return parseFloat(((waterCharge * discount) / 100).toFixed(2));
 };
 
+const calculateWaterCharges = async ({
+  category_id,
+  connection_size_id,
+  consumption,
+  connection_type_id,
+  isBulk,
+}) => {
+  try {
+    let waterCharge = 0;
+    let fixedCharge = 0;
+    let meterServiceCharge = 0;
+
+    let tariffs;
+
+    // Fetch tariffs based on bulk or non-bulk conditions
+    if (isBulk) {
+      // Bulk tariff calculation (assuming minConsumption = 0 and maxConsumption = Infinity)
+      tariffs = await db.tariffConfiguration.findAll({
+        where: { category_id, charge_type_id: 1, isBulk: true },
+        include: [],
+      });
+    } else {
+      // Non-bulk tariff calculation
+      tariffs = await db.tariffConfiguration.findAll({
+        where: { category_id, charge_type_id: 1, connection_size_id },
+        include: [
+          {
+            model: db.slabs,
+            as: "slab",
+            attributes: ["min_consumption", "max_consumption"],
+          },
+        ],
+        order: [[{ model: db.slabs, as: "slab" }, "min_consumption", "ASC"]],
+      });
+    }
+
+    if (!tariffs || tariffs.length === 0) {
+      throw new Error(
+        "No water tariff configurations found for the given category/connection size or bulk status."
+      );
+    }
+    let totalWaterCharge = 0;
+    let remainingConsumption = consumption;
+    console.log("consumption", consumption);
+    for (const tariff of tariffs) {
+      const { charge_type_id, ratePerThousand } = tariff;
+
+      // Handle the case where isBulk is true
+      let slabMin = 0;
+      let slabMax = remainingConsumption;
+
+      // If isBulk is false, fetch slab information
+      if (!isBulk) {
+        const { slab } = tariff;
+        slabMin = slab?.min_consumption || 0;
+        slabMax = slab?.max_consumption || remainingConsumption;
+      }
+
+      let applicableConsumption = Math.min(
+        remainingConsumption,
+        slabMax - slabMin
+      );
+      // if (isBulk) {
+      //   applicableConsumption = remainingConsumption;
+      // }
+
+      if (applicableConsumption > 0) {
+        totalWaterCharge += (applicableConsumption / 1000) * ratePerThousand;
+        remainingConsumption -= applicableConsumption;
+      }
+
+      if (remainingConsumption <= 0) break;
+    }
+
+    if (connection_type_id === 2) {
+      totalWaterCharge *= 1.5; // Apply 1.5x multiplier for tenant connections
+    }
+
+    return totalWaterCharge;
+  } catch (error) {
+    console.error("Error in calculateWaterCharges:", error.message);
+    throw error;
+  }
+};
+
 // Main Bill Generation Function
 exports.generateBill = async (req, res) => {
   const {
@@ -108,19 +126,16 @@ exports.generateBill = async (req, res) => {
   } = req.body;
 
   try {
-    // Basic validations
     if (!originalCategoryId || !connection_size_id || !currMonth) {
       return res.status(400).json({ message: "Invalid payload" });
     }
 
     const monthData = [];
-
-    // Prepare month data to loop over, ensuring proper structure for CW logic
     if (currMonth) {
       monthData.push({ label: "Current Month", ...currMonth });
     }
     if (prevMonth && originalCategoryId === 1) {
-      monthData.unshift({ label: "Previous Month", ...prevMonth }); // Add previous month first
+      monthData.unshift({ label: "Previous Month", ...prevMonth });
     }
 
     const resultDetails = [];
@@ -140,18 +155,15 @@ exports.generateBill = async (req, res) => {
           id: meter_status_id.id,
         },
       });
-      console.log("meterStatusData", meterStatusData.meter_status);
 
-      if (meterStatusData.meter_status != "mf") {
-        if(meterStatusData.calc_rule == "average") {
-
-            consumption = 19800;
+      if (meterStatusData.meter_status !== "mf") {
+        if (meterStatusData.calc_rule === "average") {
+          consumption = 19800; // Default if 'average' rule is used
         } else {
-            consumption = 0;
+          consumption = 10000; // Set to zero if no valid consumption
         }
       }
 
-      // Throw error if CW is true but the category_id is not 1
       if (cw && originalCategoryId !== 1) {
         return sendErrorResponse({
           res,
@@ -160,18 +172,23 @@ exports.generateBill = async (req, res) => {
         });
       }
 
-      // Use CW logic: adjust category ID based on CW property for the specific month
       const category_id = cw ? 2 : originalCategoryId;
+      const isBulk = !(
+        connection_size_id === 1 ||
+        connection_size_id === 2 ||
+        connection_size_id === 3
+      );
 
-      // Calculate water charges
-      let waterCharges = await calculateWaterCharges({
+      // Calculate charges based on charge_type_id
+      const waterCharges = await calculateWaterCharges({
         category_id,
         connection_size_id,
         consumption,
         connection_type_id,
+        isBulk,
       });
 
-      // Fetch minimum charges
+      // Fetch additional charges
       const minimumChargeTariff = await db.tariffConfiguration.findOne({
         where: {
           category_id,
@@ -179,7 +196,6 @@ exports.generateBill = async (req, res) => {
           charge_type_id: 4,
         },
       });
-
       const minimumCharge = minimumChargeTariff?.ratePerThousand || 0;
 
       // Final water charge, applying minimum charge logic
@@ -240,6 +256,7 @@ exports.generateBill = async (req, res) => {
         idcCharge,
         rebate_applied,
         bill,
+        billwithoutIDC: baseBill
       };
 
       totalBill += bill;
@@ -264,8 +281,7 @@ exports.generateBill = async (req, res) => {
       },
     });
   } catch (err) {
-    // Handle and return errors gracefully
-
+    console.log("err", err);
     return sendErrorResponse({
       res,
       err,
