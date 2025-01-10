@@ -26,10 +26,10 @@ exports.create = [
       const { max_consumption, min_consumption, category_id } = req.body
 
       // Check for category id exist or not
-      const catData = await Category.findByPk(category_id);
-      if (!catData) {
-        return sendErrorResponse({ res, msg: "Category not found", status: 400 })
-      }
+      // const catData = await Category.findByPk(category_id);
+      // if (!catData) {
+      //   return sendErrorResponse({ res, msg: "Category not found", status: 400 })
+      // }
 
 
       let data = await Slab.create({ max_consumption, min_consumption, category_id }, { new: true });
