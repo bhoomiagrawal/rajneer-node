@@ -137,7 +137,7 @@ exports.generateBill = async (req, res) => {
     let totalBill = 0;
 
     for (const month of monthData) {
-      let { label, consumption, reading_date, meter_status_id, cw } = month;
+      let { label, consumption, reading_date, meter_status, cw } = month;
 
       if (!consumption) {
         return res
@@ -147,7 +147,7 @@ exports.generateBill = async (req, res) => {
 
       let meterStatusData = await db.meterStatus.findOne({
         where: {
-          id: meter_status_id.id,
+          id: meter_status.id,
         },
       });
 
@@ -191,7 +191,6 @@ exports.generateBill = async (req, res) => {
         },
       });
       let minimumCharge = minimumChargeTariff?.ratePerThousand || 0;
-console.log('meterStatusData.meter_status_id == 1', meterStatusData.id)
       if(meterStatusData.id == 1 && category_id == 1 && consumption <= 15000) {
         waterCharges = 0;
         minimumCharge = 0;
@@ -249,7 +248,7 @@ console.log('meterStatusData.meter_status_id == 1', meterStatusData.id)
         consumption,
         cw, // Track CW logic
         reading_date,
-        meter_status_id,
+        meter_status,
         consumptionSlabs,
 
         fixedCharge,
