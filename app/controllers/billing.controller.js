@@ -3,13 +3,30 @@ const db = require("../models");
 const { sendErrorResponse, sendResponse } = require("../utils/lib");
 
 // Utility functions for other charges
-const getSewerageCharge = (waterCharge) => {
-  return parseFloat(((waterCharge * 20) / 100).toFixed(2));
+const getSewerageCharge = async (waterCharge) => {
+  // Fetch sewerage charges
+  const sewerageChargeTariff = await db.tariffConfiguration.findOne({
+    where: {
+      charge_type_id: 5,
+    },
+  });
+  const seweragePercent = sewerageChargeTariff?.chargePercent || 0;
+
+  return parseFloat(((waterCharge * seweragePercent) / 100).toFixed(2));
 };
 
-const getStpCharge = (waterCharge) => {
-  return parseFloat(((waterCharge * 13) / 100).toFixed(2));
+const getStpCharge = async (waterCharge) => {
+  // Fetch stp charges
+  const stpChargeTariff = await db.tariffConfiguration.findOne({
+    where: {
+      charge_type_id: 6,
+    },
+  });
+  const stpPercent = stpChargeTariff?.chargePercent || 0;
+
+  return parseFloat(((waterCharge * stpPercent) / 100).toFixed(2));
 };
+
 
 const idc = [
   { min: 15001, max: 40000, chargePercent: 25 },
@@ -22,6 +39,39 @@ const getIDC = (consumption, bill) => {
   let idcharge = idcData ? (bill * idcData.chargePercent) / 100 : 0;
   return parseFloat(idcharge.toFixed(2));
 };
+// temporary comment working on it
+// // const idc = [
+// //   { min: 15001, max: 40000, chargePercent: 25 },
+// //   { min: 40001, max: Infinity, chargePercent: 35 },
+// // ];
+// const getIDC = async (consumption, bill) => {
+//   // Fetch idc charges
+//   const idcTariffs = await db.tariffConfiguration.findAll({
+//     where: {
+//       charge_type_id: 7,
+//     },
+//     include: [
+//       {
+//         model: db.slabs,
+//         as: "slab",
+//         attributes: ["min_consumption", "max_consumption"],
+//       },
+//     ],
+//   });
+
+//   let idcData = idcTariffs.find((idc) => {
+//     let min_consumption = idc.slab.min_consumption || 0;
+//     let max_consumption = idc.max_consumption || Infinity;
+//     return (
+    
+//       consumption >= min_consumption &&
+//       consumption <= max_consumption
+//     );
+//   });
+//   console.log('idcData', consumption, "asdasdasd", idcData)
+//   let idcharge = idcData ? (bill * idcData.chargePercent) / 100 : 0;
+//   return parseFloat(idcharge.toFixed(2));
+// };
 
 const getRebate = (waterCharge, discount = 5) => {
   return parseFloat(((waterCharge * discount) / 100).toFixed(2));
@@ -58,7 +108,7 @@ const calculateWaterCharges = async ({
         order: [[{ model: db.slabs, as: "slab" }, "min_consumption", "ASC"]],
       });
     }
-
+    console.log("tariffs", tariffs);
     if (!tariffs || tariffs.length === 0) {
       throw new Error(
         "No water tariff configurations found for the given category/connection size or bulk status."
@@ -77,8 +127,8 @@ const calculateWaterCharges = async ({
       // If isBulk is false, fetch slab information
       if (!isBulk) {
         const { slab } = tariff;
-        
-      consumptionSlabs.push(slab);
+
+        consumptionSlabs.push(slab);
 
         slabMin = slab?.min_consumption || 0;
         slabMax = slab?.max_consumption || remainingConsumption;
@@ -100,7 +150,7 @@ const calculateWaterCharges = async ({
       totalWaterCharge *= 1.5; // Apply 1.5x multiplier for tenant connections
     }
 
-    return {totalWaterCharge: totalWaterCharge, consumptionSlabs};
+    return { waterCharges: totalWaterCharge, consumptionSlabs };
   } catch (error) {
     console.error("Error in calculateWaterCharges:", error.message);
     throw error;
@@ -139,11 +189,11 @@ exports.generateBill = async (req, res) => {
     for (const month of monthData) {
       let { label, consumption, reading_date, meter_status, cw } = month;
 
-      if (!consumption) {
-        return res
-          .status(400)
-          .json({ message: `Consumption missing for ${label}` });
-      }
+      // if (!consumption) {
+      //   return res
+      //     .status(400)
+      //     .json({ message: `Consumption missing for ${label}` });
+      // }
 
       let meterStatusData = await db.meterStatus.findOne({
         where: {
@@ -157,7 +207,7 @@ exports.generateBill = async (req, res) => {
         } else {
           consumption = 10000; // Set to zero if no valid consumption
         }
-      } 
+      }
       if (cw && originalCategoryId !== 1) {
         return sendErrorResponse({
           res,
@@ -174,7 +224,7 @@ exports.generateBill = async (req, res) => {
       );
 
       // Calculate charges based on charge_type_id
-      let {waterCharges, consumptionSlabs} = await calculateWaterCharges({
+      let { waterCharges, consumptionSlabs } = await calculateWaterCharges({
         category_id,
         connection_size_id,
         consumption,
@@ -191,13 +241,11 @@ exports.generateBill = async (req, res) => {
         },
       });
       let minimumCharge = minimumChargeTariff?.ratePerThousand || 0;
-      if(meterStatusData.id == 1 && category_id == 1 && consumption <= 15000) {
+      if (meterStatusData.id == 1 && category_id == 1 && consumption <= 15000) {
         waterCharges = 0;
         minimumCharge = 0;
         // consumptionSlabs = []
-          
-        }
-      
+      }
 
       // Final water charge, applying minimum charge logic
       const finalWaterCharge = Math.max(minimumCharge, waterCharges);
@@ -224,8 +272,10 @@ exports.generateBill = async (req, res) => {
       const meterServiceCharge = meterServiceChargeTariff?.ratePerThousand || 0;
 
       // Additional charges: Sewerage, STP, IDC, and rebate
-      const sewerageCharge = sewerage ? getSewerageCharge(finalWaterCharge) : 0;
-      const stpCharge = stp ? getStpCharge(finalWaterCharge) : 0;
+      const sewerageCharge = sewerage
+        ? await getSewerageCharge(finalWaterCharge)
+        : 0;
+      const stpCharge = stp ? await getStpCharge(finalWaterCharge) : 0;
       const rebate_applied = rebate ? getRebate(finalWaterCharge) : 0;
 
       const baseBill =
@@ -243,7 +293,6 @@ exports.generateBill = async (req, res) => {
       );
 
       const monthCharges = {
-
         label,
         consumption,
         cw, // Track CW logic
