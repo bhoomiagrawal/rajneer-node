@@ -35,11 +35,7 @@ const calculateWaterCharges = async ({
   isBulk,
 }) => {
   try {
-    let waterCharge = 0;
-    let fixedCharge = 0;
-    let meterServiceCharge = 0;
-
-    let tariffs;
+    let tariffs = [];
 
     // Fetch tariffs based on bulk or non-bulk conditions
     if (isBulk) {
@@ -70,9 +66,9 @@ const calculateWaterCharges = async ({
     }
     let totalWaterCharge = 0;
     let remainingConsumption = consumption;
-    console.log("consumption", consumption);
+    let consumptionSlabs = [];
     for (const tariff of tariffs) {
-      const { charge_type_id, ratePerThousand } = tariff;
+      const { ratePerThousand } = tariff;
 
       // Handle the case where isBulk is true
       let slabMin = 0;
@@ -81,6 +77,9 @@ const calculateWaterCharges = async ({
       // If isBulk is false, fetch slab information
       if (!isBulk) {
         const { slab } = tariff;
+        
+      consumptionSlabs.push(slab);
+
         slabMin = slab?.min_consumption || 0;
         slabMax = slab?.max_consumption || remainingConsumption;
       }
@@ -89,15 +88,11 @@ const calculateWaterCharges = async ({
         remainingConsumption,
         slabMax - slabMin
       );
-      // if (isBulk) {
-      //   applicableConsumption = remainingConsumption;
-      // }
 
       if (applicableConsumption > 0) {
         totalWaterCharge += (applicableConsumption / 1000) * ratePerThousand;
         remainingConsumption -= applicableConsumption;
       }
-
       if (remainingConsumption <= 0) break;
     }
 
@@ -105,7 +100,7 @@ const calculateWaterCharges = async ({
       totalWaterCharge *= 1.5; // Apply 1.5x multiplier for tenant connections
     }
 
-    return totalWaterCharge;
+    return {totalWaterCharge: totalWaterCharge, consumptionSlabs};
   } catch (error) {
     console.error("Error in calculateWaterCharges:", error.message);
     throw error;
@@ -180,7 +175,7 @@ exports.generateBill = async (req, res) => {
       );
 
       // Calculate charges based on charge_type_id
-      const waterCharges = await calculateWaterCharges({
+      const {waterCharges, consumptionSlabs} = await calculateWaterCharges({
         category_id,
         connection_size_id,
         consumption,
@@ -242,11 +237,14 @@ exports.generateBill = async (req, res) => {
       );
 
       const monthCharges = {
+
         label,
         consumption,
         cw, // Track CW logic
         reading_date,
         meter_status_id,
+        consumptionSlabs,
+
         fixedCharge,
         minimumCharge,
         waterCharge: finalWaterCharge,
@@ -256,7 +254,7 @@ exports.generateBill = async (req, res) => {
         idcCharge,
         rebate_applied,
         bill,
-        billwithoutIDC: baseBill
+        billwithoutIDC: baseBill,
       };
 
       totalBill += bill;
