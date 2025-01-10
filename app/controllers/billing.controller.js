@@ -157,8 +157,7 @@ exports.generateBill = async (req, res) => {
         } else {
           consumption = 10000; // Set to zero if no valid consumption
         }
-      }
-
+      } 
       if (cw && originalCategoryId !== 1) {
         return sendErrorResponse({
           res,
@@ -175,7 +174,7 @@ exports.generateBill = async (req, res) => {
       );
 
       // Calculate charges based on charge_type_id
-      const {waterCharges, consumptionSlabs} = await calculateWaterCharges({
+      let {waterCharges, consumptionSlabs} = await calculateWaterCharges({
         category_id,
         connection_size_id,
         consumption,
@@ -191,7 +190,15 @@ exports.generateBill = async (req, res) => {
           charge_type_id: 4,
         },
       });
-      const minimumCharge = minimumChargeTariff?.ratePerThousand || 0;
+      let minimumCharge = minimumChargeTariff?.ratePerThousand || 0;
+console.log('meterStatusData.meter_status_id == 1', meterStatusData.id)
+      if(meterStatusData.id == 1 && category_id == 1 && consumption <= 15000) {
+        waterCharges = 0;
+        minimumCharge = 0;
+        // consumptionSlabs = []
+          
+        }
+      
 
       // Final water charge, applying minimum charge logic
       const finalWaterCharge = Math.max(minimumCharge, waterCharges);
