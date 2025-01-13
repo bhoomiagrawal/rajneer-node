@@ -97,7 +97,7 @@ const calculateWaterCharges = async ({
     } else {
       // Non-bulk tariff calculation
       tariffs = await db.tariffConfiguration.findAll({
-        where: { category_id, charge_type_id: 1 },
+        where: { category_id, charge_type_id: 1, connection_size_id:1 },
         include: [
           {
             model: db.slabs,
@@ -117,6 +117,7 @@ const calculateWaterCharges = async ({
     let totalWaterCharge = 0;
     let remainingConsumption = consumption;
     let consumptionSlabs = [];
+
     for (const tariff of tariffs) {
       const { ratePerThousand } = tariff;
 
@@ -127,7 +128,7 @@ const calculateWaterCharges = async ({
       // If isBulk is false, fetch slab information
       if (!isBulk) {
         const { slab } = tariff;
-
+console.log('slab:::::::::::', slab)
         consumptionSlabs.push(slab);
 
         slabMin = slab?.min_consumption || 0;
@@ -143,7 +144,10 @@ const calculateWaterCharges = async ({
         totalWaterCharge += (applicableConsumption / 1000) * ratePerThousand;
         remainingConsumption -= applicableConsumption;
       }
+      console.log('applicableConsumption', applicableConsumption);
+console.log('remainingConsumption', remainingConsumption);
       if (remainingConsumption <= 0) break;
+
     }
 
     if (connection_type_id === 2) {
