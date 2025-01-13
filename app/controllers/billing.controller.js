@@ -97,7 +97,7 @@ const calculateWaterCharges = async ({
     } else {
       // Non-bulk tariff calculation
       tariffs = await db.tariffConfiguration.findAll({
-        where: { category_id, charge_type_id: 1, connection_size_id },
+        where: { category_id, charge_type_id: 1 },
         include: [
           {
             model: db.slabs,
