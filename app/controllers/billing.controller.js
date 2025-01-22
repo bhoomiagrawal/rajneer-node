@@ -108,7 +108,6 @@ const calculateWaterCharges = async ({
         order: [[{ model: db.slabs, as: "slab" }, "min_consumption", "ASC"]],
       });
     }
-    console.log("tariffs", tariffs);
     if (!tariffs || tariffs.length === 0) {
       throw new Error(
         "No water tariff configurations found for the given category/connection size or bulk status."
@@ -117,45 +116,81 @@ const calculateWaterCharges = async ({
     let totalWaterCharge = 0;
     let remainingConsumption = consumption;
     let consumptionSlabs = [];
+    let bCharge = 0;
+    let previousMax = 0;
 
     for (const tariff of tariffs) {
       const { ratePerThousand } = tariff;
-
-      // Handle the case where isBulk is true
-      let slabMin = 0;
-      let slabMax = remainingConsumption;
-
-      // If isBulk is false, fetch slab information
-      if (!isBulk) {
         const { slab } = tariff;
-console.log('slab:::::::::::', slab)
+        console.log("slab::::::::", slab)
+        let  slabMin = slab?.min_consumption || 0;
+        let  slabMax = slab?.max_consumption == null || slab?.max_consumption == "" ? Infinity : slab?.max_consumption;
+        if(slab)slab.ratePerThousand = ratePerThousand;
+        
         consumptionSlabs.push(slab);
 
-        slabMin = slab?.min_consumption || 0;
-        slabMax = slab?.max_consumption || remainingConsumption;
-      }
+     
+        console.log("consumption::::::::", consumption)
+        console.log("slabMax::::::::", slabMax)
+        if(!isBulk) {
 
-      let applicableConsumption = Math.min(
-        remainingConsumption,
-        slabMax - slabMin
-      );
+          if (consumption <= slabMax) {
+          
+              console.log("entring in consumption <= slabMax part:::::: consumption is,", consumption, "and slabMax is::::", slabMax, "::::::")
+              console.log("Slabmax values is:::", slabMax, "   and previousmax vlues is:::: ", previousMax, "   so the difference is::: ", consumption - previousMax, "   : for rate per thousand is::", ratePerThousand, "  ::")
+              bCharge += ((consumption - previousMax) / 1000) * ratePerThousand;
+  
+              console.log("bCharge::::::::", bCharge)
+            break;
+          } else {
+  
+            console.log("entring in else part::::::")
+            console.log("Slabmax values is:::", slabMax, "   and previousmax vlues is:::: ", previousMax, "   so the difference is::: ", slabMax - previousMax, "   : for rate per thousand is::", ratePerThousand, "  ::")
+            bCharge += ((slabMax - previousMax) / 1000) * ratePerThousand;
+  
+            previousMax = slabMax;
+  
+            console.log("bCharge:::::::: in else part", bCharge)
+          console.log("previousMax::::::::", previousMax)
+  
+          }
 
-      if (applicableConsumption > 0) {
-        totalWaterCharge += (applicableConsumption / 1000) * ratePerThousand;
-        remainingConsumption -= applicableConsumption;
-      }
-      console.log('applicableConsumption', applicableConsumption);
-console.log('remainingConsumption', remainingConsumption);
-      if (remainingConsumption <= 0) break;
+        } else {
 
+            bCharge = (consumption / 1000) * ratePerThousand;
+            console.log("bCharge", bCharge)
+        }
+       
     }
+    totalWaterCharge = bCharge;
+  //       console.log("slab:::::::", slab);
+  //       console.log("slabMin:::::::", slabMin);
+  //       console.log("slabMax:::::::", slabMax);
+        
+  //     }
+
+  //     let applicableConsumption = Math.min(
+  //       remainingConsumption,
+  //       slabMax - slabMin
+  //     );
+
+  //     if (applicableConsumption > 0) {
+  //       totalWaterCharge += (applicableConsumption / 1000) * ratePerThousand;
+  //       remainingConsumption -= applicableConsumption;
+  //     }
+  //     console.log('applicableConsumption', applicableConsumption);
+  // console.log('remainingConsumption', remainingConsumption);
+  //     if (remainingConsumption <= 0) break;
 
     if (connection_type_id === 2) {
       totalWaterCharge *= 1.5; // Apply 1.5x multiplier for tenant connections
     }
 
     return { waterCharges: totalWaterCharge, consumptionSlabs };
-  } catch (error) {
+  }
+
+   
+   catch (error) {
     console.error("Error in calculateWaterCharges:", error.message);
     throw error;
   }
@@ -245,7 +280,9 @@ exports.generateBill = async (req, res) => {
         },
       });
       let minimumCharge = minimumChargeTariff?.ratePerThousand || 0;
-      if (meterStatusData.id == 1 && category_id == 1 && consumption <= 15000) {
+      console.log("minimumCharge", minimumCharge)
+
+      if (meterStatusData.id == 1 && category_id == 1 && connection_size_id ==1 && consumption <= 15000) {
         waterCharges = 0;
         minimumCharge = 0;
         // consumptionSlabs = []
