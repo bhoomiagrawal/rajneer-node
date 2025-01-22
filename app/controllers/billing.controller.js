@@ -108,6 +108,7 @@ const calculateWaterCharges = async ({
         order: [[{ model: db.slabs, as: "slab" }, "min_consumption", "ASC"]],
       });
     }
+    console.log("tariffs value is :-", tariffs);
     if (!tariffs || tariffs.length === 0) {
       throw new Error(
         "No water tariff configurations found for the given category/connection size or bulk status."
@@ -263,6 +264,12 @@ exports.generateBill = async (req, res) => {
       );
 
       // Calculate charges based on charge_type_id
+      const data = await calculateWaterCharges({category_id,
+        connection_size_id,
+        consumption,
+        connection_type_id,
+        isBulk,});
+      console.log(data,"<------> data <------>");
       let { waterCharges, consumptionSlabs } = await calculateWaterCharges({
         category_id,
         connection_size_id,
@@ -270,7 +277,7 @@ exports.generateBill = async (req, res) => {
         connection_type_id,
         isBulk,
       });
-
+    console.log(consumptionSlabs," <------> consumptionSlabs ",waterCharges);
       // Fetch additional charges
       const minimumChargeTariff = await db.tariffConfiguration.findOne({
         where: {
