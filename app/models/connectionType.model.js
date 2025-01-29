@@ -32,5 +32,12 @@ module.exports = (sequelize, Sequelize) => {
     paranoid: true              // adds deletedAt for soft deletes
   });
 
+  ConnectionType.associate = (models) => {
+    ConnectionType.hasMany(models.consumerData, {
+      as: 'consumerData',
+      foreignKey: 'conn_type_id',
+    });
+  };
+
   return ConnectionType;
 };

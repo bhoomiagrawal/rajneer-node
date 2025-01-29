@@ -203,6 +203,9 @@ exports.binderValidation = [
     .isLength({ min: 3 }).withMessage('Subcategory name must be at least 3 characters long.'),
 
 ];
+exports.ownerTypeValidation = [
+    body('owner_type_name').notEmpty().withMessage('Type of Owner is required.')
+];
 
 exports.tariffValidation = [
   body("charge_type_id")

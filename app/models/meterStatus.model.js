@@ -25,6 +25,15 @@ module.exports = (sequelize, Sequelize) => {
       paranoid: true              // adds deletedAt for soft deletes
     });
   
+    MeterStatus.associate = (models) => {
+      MeterStatus.hasMany(models.consumerData, {
+        as: 'consumerData',
+        foreignKey: 'meter_status_id',
+      });
+
+  
+    };
+
     return MeterStatus;
   };
   

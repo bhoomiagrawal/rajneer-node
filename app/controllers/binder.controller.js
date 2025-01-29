@@ -39,7 +39,7 @@ exports.create = [
                 updated_by: req.body.updated_by,
                 status: req.body.status,
             };
-            console.log('temp data', temp )
+            // console.log('temp data', temp )
             const data1= await BinderModel.findAll();
             console.log('data1', data1 )
             let data = await BinderModel.create(temp, { new: true });

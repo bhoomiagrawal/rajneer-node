@@ -75,6 +75,13 @@ const constant = {
     Subcategory_not_found: "Subcategory not found",
     Subcategory_not_deleted: "Subcategory not deleted",
 
+    ownerType_not_found: "Owner Type not found",
+    ownerType_Added: "Owner Type added successfully",
+    ownerType_Updated: "Owner Type updated successfully",
+    ownerType_Deleted: "Owner Type deleted successfully",
+    ownerType_not_found: "Owner Type not found",
+    ownerType_not_deleted: "Owner Type not deleted",
+
     connectionSize_Added: " Connection Size added successfully",
     connectionSize_Updated: " Connection Size updated successfully",
     connectionSize_Deleted: " Connection Size deleted successfully",

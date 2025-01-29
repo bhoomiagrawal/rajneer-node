@@ -26,6 +26,13 @@ module.exports = (sequelize, Sequelize) => {
           as: 'fixedCharges',             // Alias for the relationship
           onDelete: 'CASCADE',            // Cascade on delete
       });
+
+      // Relationships
+      ConnectionSize.hasMany(models.consumerData, {
+          foreignKey: 'connection_size_id', // Foreign key in the FixedCharges model
+          as: 'consumerData',             // Alias for the relationship
+          onDelete: 'CASCADE',            // Cascade on delete
+      });
   };
 
   return ConnectionSize;

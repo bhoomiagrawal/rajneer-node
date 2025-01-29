@@ -33,6 +33,12 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'category_id',
       as: 'category',
     });
+
+    // Subcategories.hasMany(models.consumerData, {
+    //   as: 'consumerData',
+    //   foreignKey: 'subcategory_id',
+    // });
+
   };
   
   return Subcategories;
