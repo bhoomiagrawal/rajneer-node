@@ -1,6 +1,6 @@
 module.exports = (sequelize, Sequelize) => {
-    const ConsumerProfile = sequelize.define(
-        'consumerProfile',
+    const ConsumerData = sequelize.define(
+        'consumerData',
         {
             id: {
                 type: Sequelize.INTEGER,
@@ -9,13 +9,14 @@ module.exports = (sequelize, Sequelize) => {
             },
             cin_number: {
                 type: Sequelize.STRING,
-                allowNull: false,
-                unique: true, // CID must be unique
+                allowNull: true,
+                unique: true,
             },
             name: {
                 type: Sequelize.STRING,
-                allowNull: false,
+                allowNull: true,
             },
+            // Other fields remain the same...
             address1: {
                 type: Sequelize.STRING,
             },
@@ -31,119 +32,121 @@ module.exports = (sequelize, Sequelize) => {
             division: {
                 type: Sequelize.STRING,
             },
-            sdo_id: {
-                // type: Sequelize.STRING,
-                type: Sequelize.INTEGER,
-                allowNull: true,
-                references: {
-                    model: 'Office',
-                    key: 'office_level_id',
-                },
-                onDelete: 'SET NULL',
-                onUpdate: 'CASCADE',
-            },
-            group: {
-                type: Sequelize.STRING,
-            },
-            chk: {
-                type: Sequelize.STRING,
-            },
-            account_no: {
-                type: Sequelize.STRING,
-            },
-            service_no: {
-                type: Sequelize.STRING,
-            },
-            sewerage: {
-                type: Sequelize.BOOLEAN,
-                defaultValue: false,
-            },
-            stp: {
-                type: Sequelize.BOOLEAN,
-                defaultValue: false,
-            },
-            rebate_off: {
-                type: Sequelize.BOOLEAN,
-                defaultValue: false,
-            },
-            category_id: {
-                type: Sequelize.INTEGER,
-                allowNull: true,
-                references: {
-                    model: 'categories',
-                    key: 'id',
-                },
-                onDelete: 'SET NULL',
-                onUpdate: 'CASCADE',
-            },
-            connection_type_id: {
-                type: Sequelize.INTEGER,
-                allowNull: false,
-                references: {
-                    model: 'connection_type',
-                    key: 'id',
-                },
-                onDelete: 'CASCADE',
-                onUpdate: 'CASCADE',
-            },
-            connection_size_id: {
-                type: Sequelize.INTEGER,
-                allowNull: true,
-                references: {
-                    model: 'connection_size',
-                    key: 'id',
-                },
-                onDelete: 'SET NULL',
-                onUpdate: 'CASCADE',
-            },
-            meter_no: {
-                type: Sequelize.STRING,
-            },
-            meter_status_id: {
-                type: Sequelize.INTEGER,
-                allowNull: true,
-                references: {
-                    model: 'meter_status',
-                    key: 'id',
-                },
-                onDelete: 'SET NULL',
-                onUpdate: 'CASCADE',
-            },
-            status: {
-                type: Sequelize.INTEGER, // 1 = Active, 0 = Inactive
-                allowNull: false,
-                defaultValue: 1,
-            },
+            // sdo_id: {
+            //     type: Sequelize.INTEGER,
+            //     allowNull: true,
+            //     references: {
+            //         model: 'm_office', // Correct model name here
+            //         key: 'office_level_id', // Correct foreign key here
+            //     },
+            //     onDelete: 'SET NULL',
+            //     onUpdate: 'CASCADE',
+            // },
+            // Other fields...
+       
+
+        group: {
+            type: Sequelize.STRING,
         },
+        chk: {
+            type: Sequelize.STRING,
+        },
+        account_no: {
+            type: Sequelize.STRING,
+        },
+        service_no: {
+            type: Sequelize.STRING,
+        },
+        sewerage: {
+            type: Sequelize.BOOLEAN,
+            defaultValue: false,
+        },
+        stp: {
+            type: Sequelize.BOOLEAN,
+            defaultValue: false,
+        },
+        rebate_off: {
+            type: Sequelize.BOOLEAN,
+            defaultValue: false,
+        },
+        category_id: {
+            type: Sequelize.INTEGER,
+            allowNull: true,
+            references: {
+                model: 'categories',
+                key: 'id',
+            },
+            onDelete: 'SET NULL',
+            onUpdate: 'CASCADE',
+        },
+        connection_type_id: {
+            type: Sequelize.INTEGER,
+            allowNull: true,
+            references: {
+                model: 'connection_type',
+                key: 'id',
+            },
+            onDelete: 'CASCADE',
+            onUpdate: 'CASCADE',
+        },
+        connection_size_id: {
+            type: Sequelize.INTEGER,
+            allowNull: true,
+            references: {
+                model: 'connection_size',
+                key: 'id',
+            },
+            onDelete: 'SET NULL',
+            onUpdate: 'CASCADE',
+        },
+        meter_no: {
+            type: Sequelize.STRING,
+        },
+        meter_status_id: {
+            type: Sequelize.INTEGER,
+            allowNull: true,
+            references: {
+                model: 'meter_status',
+                key: 'id',
+            },
+            onDelete: 'SET NULL',
+            onUpdate: 'CASCADE',
+        },
+        status: {
+            type: Sequelize.INTEGER, // 1 = Active, 0 = Inactive
+            allowNull: true,
+            defaultValue: 1,
+        },
+    },
         {
-            tableName: 'consumer_profile',
+            tableName: 'consumer_data',
             timestamps: true,
             paranoid: true,
         }
     );
 
-    ConsumerProfile.associate = (models) => {
-        ConsumerProfile.belongsTo(models.categories, {
+    ConsumerData.associate = (models) => {
+        ConsumerData.belongsTo(models.categories, {
             foreignKey: 'category_id',
             as: 'category',
         });
-        ConsumerProfile.belongsTo(models.connectionType, {
+        ConsumerData.belongsTo(models.connectionType, {
             foreignKey: 'connection_type_id',
             as: 'connectionType',
         });
-        ConsumerProfile.belongsTo(models.connectionSize, {
+        ConsumerData.belongsTo(models.connectionSize, {
             foreignKey: 'connection_size_id',
             as: 'connectionSize',
         });
-        ConsumerProfile.belongsTo(models.meterStatus, {
+        ConsumerData.belongsTo(models.meterStatus, {
             foreignKey: 'meter_status_id',
             as: 'meterStatus',
         });
-        ConsumerProfile.belongsTo(models.Office, {
-            foreignKey: 'sdo_id',
-            as: 'sdo',
-        });
+        // ConsumerData.belongsTo(models.Office, {
+        //     foreignKey: 'sdo_id',
+        //     as: 'sdo',
+        // });
     };
 
-    return ConsumerProfile;
+    return ConsumerData;
 };
