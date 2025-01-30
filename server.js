@@ -7,6 +7,9 @@ const db = require("./app/models");
 const loadRoutes = require('./app/routes');
 const logger = require('./app/middleware/logger');
 
+// const insertData = require("./app/scripts/script");
+// const populateOfficeData = require("./app/scripts/insertOffice");
+// const insertEmitra = require("./app/scripts/insertEmitraCodes");
 
 // var corsOptions = {
 //   origin: "http://localhost:8081"
@@ -66,8 +69,15 @@ loadRoutes(app);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log(`Server is running on port ${PORT}.`);
+  // Insert data into the database when the server starts
+  // await populateOfficeData();
+  // await insertEmitra();
+
+  console.log("Database insertion complete, server is running.");
 });
 
 
+
+// running script
