@@ -9,7 +9,7 @@ module.exports = {
   USER: "root",
   // PASSWORD: "Phed@root",
   // DB: "rajneernew",
-  PASSWORD: "Root@123",
+  PASSWORD: "root@123",
   DB: "rajneer2",
   dialect: "mysql",
   // pool: {

@@ -32,16 +32,16 @@ module.exports = (sequelize, Sequelize) => {
             division: {
                 type: Sequelize.STRING,
             },
-            // sdo_id: {
-            //     type: Sequelize.INTEGER,
-            //     allowNull: true,
-            //     references: {
-            //         model: 'm_office', // Correct model name here
-            //         key: 'office_level_id', // Correct foreign key here
-            //     },
-            //     onDelete: 'SET NULL',
-            //     onUpdate: 'CASCADE',
-            // },
+            sdo_id: {
+                type: Sequelize.STRING,
+                allowNull: true,
+                references: {
+                    model: 'm_office', // Correct model name here
+                    key: 'office_id', // Correct foreign key here
+                },
+                onDelete: 'SET NULL',
+                onUpdate: 'CASCADE',
+            },
             // Other fields...
        
 
@@ -142,10 +142,10 @@ module.exports = (sequelize, Sequelize) => {
             foreignKey: 'meter_status_id',
             as: 'meterStatus',
         });
-        // ConsumerData.belongsTo(models.Office, {
-        //     foreignKey: 'sdo_id',
-        //     as: 'sdo',
-        // });
+        ConsumerData.belongsTo(models.Office, {
+            foreignKey: 'sdo_id',
+            as: 'sdo',
+        });
     };
 
     return ConsumerData;

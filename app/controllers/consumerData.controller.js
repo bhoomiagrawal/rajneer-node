@@ -126,6 +126,7 @@ exports.create = [
             // Function to map metersize letters to IDs
             const mapMeterSizeID = (metersize) => {
                 const metersizeMapping = {
+                    '0': null,
                     '15': 1,
                     '20': 2,
                     '25': 3,
@@ -134,6 +135,13 @@ exports.create = [
                     '80': 6,
                     '100': 7,
                     '150': 8,
+                    '1/2"': 1,
+                    '3/4"': 2,
+                    '1"':3,
+                    '2"':5,
+                    '3"': 6,
+                    '4"': 7
+
                 };
                 return metersizeMapping[metersize] || null;
             };
@@ -172,10 +180,13 @@ exports.create = [
                     throw new Error(`Missing required fields in row: ${JSON.stringify(row)}`);
                 }
 
+
                 return {
                     cin_number: row.CID,
                     name: row.NAME,
-                    address: row.ADD1 || row.ADD2 || row.ADD3 || null,
+                    address1: row.ADD1 || null,
+                    address2:  row.ADD2  || null,
+                    address3: row.ADD3 || null,
                     mobile_number: row.MOBILE || null,
                     category_id: mapCategoryID(row.CAT),
                     connection_type_id: 1,
@@ -184,13 +195,17 @@ exports.create = [
                     status: row.Status || 1,
                     division: row.DIV || null,
                     // sdo_id: row.SDO || null,
+                    sdo_id: 3013026,
                     group: row.GRUP || null,
                     chk: row.CHK || null,
                     account_no: row.ACNT_NO || null,
-                    meter_size: row.METER_SIZE || null,
+                    // meter_size: row.METER_SIZE || null,
                     sewerage: row.CURR_SWTX ? true : false,
-                    stp: row.CURR_CAPT ? true : false,
+                    stp: true ,
                     rebate_off: row.REBT_OFF ? true : false,
+                    service_no: row.SERV_NO,
+                    meter_no: row.METER_NO,
+
                 };
             });
 
