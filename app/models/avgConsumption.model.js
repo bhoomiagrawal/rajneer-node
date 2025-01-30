@@ -11,7 +11,7 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.STRING,
             allowNull: true,
             references: {
-                model: 'consumerData', // Correct model name here
+                model: 'consumer_data', // Correct model name here
                 key: 'cin_number', // Correct foreign key here
             },
             onDelete: 'SET NULL',
