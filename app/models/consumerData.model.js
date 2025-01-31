@@ -42,10 +42,17 @@ module.exports = (sequelize, Sequelize) => {
                 onDelete: 'SET NULL',
                 onUpdate: 'CASCADE',
             },
+
+
+            subdivision_number: {
+                type: Sequelize.STRING, // e.g., "N1-05"
+                allowNull: true,
+                defaultValue: null,
+              },
             // Other fields...
        
 
-        group: {
+            grup: {
             type: Sequelize.STRING,
         },
         chk: {
@@ -54,9 +61,9 @@ module.exports = (sequelize, Sequelize) => {
         account_no: {
             type: Sequelize.STRING,
         },
-        service_no: {
-            type: Sequelize.STRING,
-        },
+        // service_no: {
+        //     type: Sequelize.STRING,
+        // },
         sewerage: {
             type: Sequelize.BOOLEAN,
             defaultValue: false,
@@ -102,16 +109,27 @@ module.exports = (sequelize, Sequelize) => {
         meter_no: {
             type: Sequelize.STRING,
         },
-        meter_status_id: {
+        owner_type_id: {
             type: Sequelize.INTEGER,
             allowNull: true,
+            defaultValue:1,
             references: {
-                model: 'meter_status',
+                model: 'owner_type',
                 key: 'id',
             },
             onDelete: 'SET NULL',
             onUpdate: 'CASCADE',
         },
+        // meter_status_id: {
+        //     type: Sequelize.INTEGER,
+        //     allowNull: true,
+        //     references: {
+        //         model: 'meter_status',
+        //         key: 'id',
+        //     },
+        //     onDelete: 'SET NULL',
+        //     onUpdate: 'CASCADE',
+        // },
         status: {
             type: Sequelize.INTEGER, // 1 = Active, 0 = Inactive
             allowNull: true,
@@ -146,6 +164,14 @@ module.exports = (sequelize, Sequelize) => {
             foreignKey: 'sdo_id',
             as: 'sdo',
         });
+        ConsumerData.belongsTo(models.ownertype, {
+            foreignKey: 'owner_type_id',
+            as: 'ownerType',
+        });
+        // ConsumerData.belongsTo(models.Office, {
+        //     foreignKey: 'sdo_id',
+        //     as: 'sdo',
+        // });
     };
 
     return ConsumerData;
