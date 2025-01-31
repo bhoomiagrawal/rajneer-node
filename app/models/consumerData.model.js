@@ -42,10 +42,17 @@ module.exports = (sequelize, Sequelize) => {
                 onDelete: 'SET NULL',
                 onUpdate: 'CASCADE',
             },
+
+
+            subdivision_number: {
+                type: Sequelize.STRING, // e.g., "N1-05"
+                allowNull: true,
+                defaultValue: null,
+              },
             // Other fields...
        
 
-        group: {
+            grup: {
             type: Sequelize.STRING,
         },
         chk: {

@@ -14,18 +14,75 @@ module.exports = (sequelize, Sequelize) => {
         allowNull: true,
         defaultValue: null,
       },
+      bill_number: {
+        type: Sequelize.STRING, // e.g., "1312"
+        allowNull: true,
+        defaultValue: null,
+      },
+      subdivision_number: {
+        type: Sequelize.STRING, // e.g., "N1-05"
+        allowNull: true,
+        defaultValue: null,
+      },
+      bill_id: {
+        type: Sequelize.STRING,
+      },
+      category_id: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+        references: {
+            model: 'categories',
+            key: 'id',
+        },
+        onDelete: 'SET NULL',
+        onUpdate: 'CASCADE',
+    },
+
+// Meter and Connection Details
+service_no: {
+    type: Sequelize.STRING,
+  },
+
+account_number: {
+    type: Sequelize.STRING, // e.g., "09D-04-021"
+    allowNull: true,
+    defaultValue: null,
+  },
+  
+ 
+  connection_size: {
+    type: Sequelize.STRING, // e.g., "1/2\""
+    allowNull: true,
+    defaultValue: null,
+  },
+
+  bill_issue_date: {
+    type: Sequelize.DATE, // e.g., "2024-07-13"
+    allowNull: true,
+    defaultValue: null,
+  },
+
+
+ //create owner type also (// e.g., "GOV")
+ meter_no: {
+    type: Sequelize.STRING, // e.g., "64877"
+    allowNull: true,
+    defaultValue: null,
+  },
+
+
+
+
       noof_mnth: {
         type: Sequelize.INTEGER, // e.g., "140120413863"
         allowNull: true,
         defaultValue: 1,
       },
-      bill_id: {
-        type: Sequelize.STRING,
-      },
+      
       zone_code: {
         type: Sequelize.STRING, // e.g., "0"
         allowNull: true,
-        defaultValue: null,
+        defaultValue: 0,
       },
       // customer_name: {
       //     type: Sequelize.STRING, // e.g., "AABID"
@@ -47,25 +104,7 @@ module.exports = (sequelize, Sequelize) => {
         allowNull: true,
         defaultValue: null,
       },
-      // Meter and Connection Details
-      account_number: {
-        type: Sequelize.STRING, // e.g., "09D-04-021"
-        allowNull: true,
-        defaultValue: null,
-      },
-      subdivision_number: {
-        type: Sequelize.STRING, // e.g., "N1-05"
-        allowNull: true,
-        defaultValue: null,
-      },
-      bill_number: {
-        type: Sequelize.STRING, // e.g., "1312"
-        allowNull: true,
-        defaultValue: null,
-      },
-      service_no: {
-        type: Sequelize.STRING,
-      },
+      
       curr_meter_status_id: {
         type: Sequelize.INTEGER,
         allowNull: true,
@@ -86,28 +125,10 @@ module.exports = (sequelize, Sequelize) => {
         onDelete: "SET NULL",
         onUpdate: "CASCADE",
       },
-      //create owner type also (// e.g., "GOV")
-      meter_no: {
-        type: Sequelize.STRING, // e.g., "64877"
-        allowNull: true,
-        defaultValue: null,
-      },
-      category: {
-        type: Sequelize.ENUM("Non Domestic", "Domestic", "Industrial"), // e.g., "Domestic"
-        allowNull: true,
-        defaultValue: null,
-      },
-
-      connection_size: {
-        type: Sequelize.STRING, // e.g., "1/2\""
-        allowNull: true,
-        defaultValue: null,
-      },
-      bill_issue_date: {
-        type: Sequelize.DATE, // e.g., "2024-07-13"
-        allowNull: true,
-        defaultValue: null,
-      },
+     
+     
+     
+    
 
       // Billing Data for Each Month
       prev_reading_date: {
@@ -287,6 +308,15 @@ module.exports = (sequelize, Sequelize) => {
       paranoid: true,
     }
   );
+
+  GeneratedBill.associate = (models) => {
+    GeneratedBill.belongsTo(models.categories, {
+        foreignKey: 'category_id',
+        as: 'category',
+    });
+    
+  }
+ 
   // GeneratedBill.associate = (models) => {
   //     // Relationships
   //     GeneratedBill.belongsTo(models.users, {
