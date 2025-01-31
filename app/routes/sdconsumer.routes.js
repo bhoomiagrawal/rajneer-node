@@ -6,6 +6,6 @@ const router = express.Router();
 
 // router.get("/", consumerData.getAll);
 router.get("/grp-chk", sdConsumer.chkGroupCombinations);
-router.get("/grp-chk-consumers/:chkGroup", sdConsumer.consumersByChkGroup);
+router.get("/grp-chk-consumers/:division/:subdivision/:chkGroup", sdConsumer.consumersByChkGroup);
 
 module.exports = router
