@@ -199,7 +199,32 @@ const calculateWaterCharges = async ({
 
 // Main Bill Generation Function
 exports.generateBill = async (req, res) => {
-  const {
+
+  const { billingData } = req.body; // Accept an array of billing data objects.
+ 
+console.log('billingData', billingData)
+  // const {
+  //   category_id: originalCategoryId,
+  //   connection_size_id,
+  //   sewerage,
+  //   stp,
+  //   rebate,
+  //   currMonth,
+  //   prevMonth,
+  //   connection_type_id,
+  // } = req.body;
+
+  try {
+
+    if (!billingData || billingData.length === 0) { // Check if billingData array is empty.
+      return res.status(400).json({ message: "Invalid payload: No data provided" });
+    }
+
+    const generatedBills = [];
+    // Loop through each billing object in the array and process them.
+    for (const billPayload of billingData) {  // Changed: Loop through the billingData array
+
+       const {
     category_id: originalCategoryId,
     connection_size_id,
     sewerage,
@@ -208,9 +233,8 @@ exports.generateBill = async (req, res) => {
     currMonth,
     prevMonth,
     connection_type_id,
-  } = req.body;
+  } = billPayload;
 
-  try {
     if (!originalCategoryId || !connection_size_id || !currMonth) {
       return res.status(400).json({ message: "Invalid payload" });
     }
@@ -368,17 +392,20 @@ exports.generateBill = async (req, res) => {
     const lps = Math.round((totalBill * 10) / 100);
     const totalBillWithLPS = totalBill + lps;
 
+    generatedBills.push({
+      detailsByMonth: resultDetails,
+      totalBill,
+      lps,
+      totalBillWithLPS,
+      ...billPayload
+    })
+  }
     // Response payload
     return sendResponse({
       res,
       data: {
         message: "Bill generated successfully",
-        billDetails: {
-          detailsByMonth: resultDetails,
-          totalBill,
-          lps,
-          totalBillWithLPS,
-        },
+        billDetails: generatedBills,
       },
     });
   } catch (err) {
