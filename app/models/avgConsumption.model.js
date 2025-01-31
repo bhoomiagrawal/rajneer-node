@@ -11,11 +11,7 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.STRING,
             allowNull: true,
             references: {
-<<<<<<< Updated upstream
-                model: 'consumer_data', // Correct model name here
-=======
                 model: 'consumer_Data', // Correct model name here
->>>>>>> Stashed changes
                 key: 'cin_number', // Correct foreign key here
             },
             onDelete: 'SET NULL',
