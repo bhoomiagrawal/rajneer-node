@@ -103,40 +103,61 @@ exports.getSingle = async (req, res) => {
     }
 }
 
+
 exports.getAll = async (req, res) => {
     try {
-        // Use the helper to extract pagination and search information for the specific field ('Connection_Size')
-        const { offset, perPage, whereCondition } = getPaginationAndSearch(req, 'meter_status');  // Pass the field for search
-        // Fetch the connection size list with pagination and search filter
-        let meteStatusCodeList = await meteStatusCode.findAndCountAll({
-            offset,
-            limit: perPage,
-            where: whereCondition,  // Apply search filter if exists
+        // Fetch all meter status codes without pagination or search filters
+        const meteStatusCodeList = await meteStatusCode.findAll();
+
+        // Return the response with the retrieved data
+        return sendResponse({
+            res,
+            data: {
+                meteStatusCode: meteStatusCodeList,  // All records
+                count: meteStatusCodeList.length,    // Total count of records
+            }
         });
-        const totalPages = meteStatusCodeList.count > 0 ? Math.ceil(meteStatusCodeList.count / perPage) : 0;
-        // if (!meteStatusCodeList) {
-        //     return sendErrorResponse({
-        //         res,
-        //         msg:message.Record_not_found,
-        //         status:404
-        //     })
-        // }
- // Return the modified response with status and message inside subCategory object
- return sendResponse({
-    res, 
-    // data:{
-    //     meteStatusCode: meteStatusCodeList.rows,  // Rename rows to data
-    //     count: meteStatusCodeList.count  // Include the total count
-    // }
-    data: {
-        meteStatusCode: meteStatusCodeList.rows,  // Rename rows to subCategory data
-        count: meteStatusCodeList.count,   // Include the total count for pagination
-        totalPages: totalPages, // Calculate total pages
-        currentPage: req.query.page || 1, // Current page based on the request
-        pageSize: perPage, // Number of items per page
-    }
-})        
     } catch (err) {
-       return sendErrorResponse({res,err})
+        return sendErrorResponse({ res, err });
     }
 };
+
+
+
+// exports.getAll = async (req, res) => {
+//     try {
+//         // Use the helper to extract pagination and search information for the specific field ('Connection_Size')
+//         const { offset, perPage, whereCondition } = getPaginationAndSearch(req, 'meter_status');  // Pass the field for search
+//         // Fetch the connection size list with pagination and search filter
+//         let meteStatusCodeList = await meteStatusCode.findAndCountAll({
+//             offset,
+//             limit: perPage,
+//             where: whereCondition,  // Apply search filter if exists
+//         });
+//         const totalPages = meteStatusCodeList.count > 0 ? Math.ceil(meteStatusCodeList.count / perPage) : 0;
+//         // if (!meteStatusCodeList) {
+//         //     return sendErrorResponse({
+//         //         res,
+//         //         msg:message.Record_not_found,
+//         //         status:404
+//         //     })
+//         // }
+//  // Return the modified response with status and message inside subCategory object
+//  return sendResponse({
+//     res, 
+//     // data:{
+//     //     meteStatusCode: meteStatusCodeList.rows,  // Rename rows to data
+//     //     count: meteStatusCodeList.count  // Include the total count
+//     // }
+//     data: {
+//         meteStatusCode: meteStatusCodeList.rows,  // Rename rows to subCategory data
+//         count: meteStatusCodeList.count,   // Include the total count for pagination
+//         totalPages: totalPages, // Calculate total pages
+//         currentPage: req.query.page || 1, // Current page based on the request
+//         pageSize: perPage, // Number of items per page
+//     }
+// })        
+//     } catch (err) {
+//        return sendErrorResponse({res,err})
+//     }
+// };
