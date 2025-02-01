@@ -172,14 +172,14 @@ exports.chkGroupCombinations = async (req, res) => {
     const consumerRecords = await ConsumerData.findAll({
       attributes: [
         "chk",
-        "group",
+        "grup",
         [db.Sequelize.fn("COUNT", db.Sequelize.col("id")), "consumerCount"],
       ],
       where: {
         chk: { [db.Sequelize.Op.not]: null },
-        group: { [db.Sequelize.Op.not]: null },
+        grup: { [db.Sequelize.Op.not]: null },
       },
-      group: ["chk", "group"], // Group by chk and group
+      grup: ["chk", "group"], // Group by chk and group
       raw: true,
     });
 
@@ -189,11 +189,11 @@ exports.chkGroupCombinations = async (req, res) => {
 
     // Organize data into chk-group combinations with consumer count
     const chkGroupMap = {};
-    consumerRecords.forEach(({ chk, group, consumerCount }) => {
+    consumerRecords.forEach(({ chk, grup, consumerCount }) => {
       if (!chkGroupMap[chk]) {
         chkGroupMap[chk] = [];
       }
-      chkGroupMap[chk].push({ group, consumerCount });
+      chkGroupMap[chk].push({ grup, consumerCount });
     });
 
     // Format the response
