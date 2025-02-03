@@ -257,6 +257,7 @@ exports.generateBill = async (req, res) => {
         currMonth,
         prevMonth,
         connection_type_id,
+        avg_consumption
       } = billPayload;
 
       if (!originalCategoryId || !connection_size_id || !currMonth) {
@@ -287,7 +288,7 @@ exports.generateBill = async (req, res) => {
 
         if (meterStatusData.meter_status !== "mf") {
           if (meterStatusData.calc_rule === "average") {
-            consumption = 19800; // Default if 'average' rule is used
+            consumption = avg_consumption; // Default if 'average' rule is used
           } else {
             consumption = 10000; // Set to zero if no valid consumption
           }
